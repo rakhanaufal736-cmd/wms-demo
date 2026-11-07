@@ -12,9 +12,9 @@ Demo manajemen gudang suku cadang industri yang memakai metode teknik industri: 
 
 Gudang suku cadang memegang ribuan SKU dengan pola permintaan yang sangat berbeda. Tiga pertanyaan yang diangkat demo ini:
 
-1. **Berapa banyak dan kapan memesan?** Stok terlalu tipis menghentikan produksi pelanggan, stok terlalu tebal mengikat modal.
+1. **Berapa banyak dan kapan memesan?** Stok terlalu sedikit berpotensi menghentikan proses produksi dan sales, stok terlalu banyak biaya inventory berpotensi membengkak.
 2. **Di rak mana barang ditaruh?** Barang yang sering diambil sebaiknya dekat dock dan setinggi pinggang.
-3. **Seberapa yakin dengan angkanya?** Rumus bergantung pada asumsi biaya dan lead time, jadi perlu diuji kepekaannya.
+3. **Seberapa yakin dengan angkanya?** Rumus bergantung pada asumsi biaya dan lead time, jadi perlu diuji sensitivitasnya.
 
 ## Isi aplikasi
 
@@ -65,11 +65,11 @@ Angka berikut dihitung ulang aplikasi dari data seed, bukan angka tetap.
 
 ## Verifikasi
 
-- **12 kasus hitung tangan** (EOQ, SS, ROP, ABC, XYZ, rute, dan lainnya) harus cocok dengan hasil fungsi. Hasilnya tampil di menu Verifikasi rumus.
+- **12 kasus hitung manual** (EOQ, SS, ROP, ABC, XYZ, rute, dan lainnya) harus cocok dengan hasil fungsi pada program. Hasilnya tampil di menu Verifikasi rumus.
 - **Hitung ulang independen** untuk seluruh 300 SKU.
 - **Ekspor CSV** berisi rumus spreadsheet (SUM, STDEV, SQRT, ROUNDUP) untuk dibandingkan dengan hasil aplikasi. Perbandingan dengan LibreOffice menunjukkan selisih nol.
 - **23 tes otomatis** (`logic.test.js`) mencakup rumus, invarian data setelah rangkaian aksi gudang, determinisme seed, dan elastisitas teoretis (EOQ ∝ √(S÷H), SS ∝ √L).
-- Seed deterministik dan memiliki sidik jari data, sehingga hasil sama di semua browser.
+- Seed deterministik dan memiliki fingerprint, sehingga hasil dapat konsisten di semua browser.
 
 Menjalankan tes: letakkan `logic.js` dan `logic.test.js` dalam satu folder, lalu jalankan `node --test` (Node 18 atau lebih baru).
 
@@ -77,15 +77,15 @@ Menjalankan tes: letakkan `logic.js` dan `logic.test.js` dalam satu folder, lalu
 
 Bagian ini sengaja ditulis terbuka.
 
-- **Data rekaan, satu pengguna.** Tidak ada backend, autentikasi, atau jejak audit.
+- **Data simulasi, satu pengguna.** Tidak ada backend, autentikasi, atau jejak audit.
 - **Waktu picking** memakai kecepatan jalan dan waktu per baris yang diasumsikan, bukan hasil studi waktu.
-- **Rute** memakai heuristik nearest-neighbor, bukan solusi optimal. Belum ada batch picking, zone picking, kapasitas troli, atau FIFO/FEFO.
+- **Rute** memakai heuristik nearest-neighbor, bukan solusi optimal. Belum ada batch picking, zone picking, kapasitas troli, atau FIFO/FEFO; tetapi bisa diimplementasikan sesuai kebutuhan. 
 - **Permintaan dianggap stasioner.** Belum ada musiman, tren, atau peramalan.
 - **Satu nilai biaya pesan dan biaya simpan** dipakai untuk semua SKU, padahal pemasok dan kategori berbeda.
-- **Slotting** meminimalkan skor biaya per lokasi. Skor itu pendekatan terhadap jarak sebenarnya, sehingga memindahkan semua SKU (16,0%) tidak selalu lebih baik daripada memindahkan 100 SKU terpilih (21,2%).
+- **Slotting** meminimalkan skor biaya per lokasi. Sebenarnya, skor itu pendekatan terhadap jarak, sehingga memindahkan semua SKU (16,0%) tidak selalu lebih baik daripada memindahkan 100 SKU terpilih (21,2%).
 - Pengujian dilakukan di Chrome. Safari dan Firefox belum diuji.
 
-## Menjalankan dan menayangkan
+## Cara menjalankan
 
 Buka `index.html` di browser, tanpa instalasi. Untuk menayangkannya, unggah berkas ke repositori publik GitHub dan aktifkan GitHub Pages (Settings, Pages, branch `main`, folder root).
 
@@ -100,4 +100,4 @@ docs/             tangkapan layar untuk README
 
 ## Pengembangan lanjutan
 
-Bila dikembangkan menjadi sistem penuh: basis data dan API, login dengan peran (admin, supervisor, picker), pemindai barcode di layar picker, integrasi ERP, peramalan permintaan, batch dan zone picking, serta studi waktu untuk mengganti asumsi waktu picking.
+Bila dikembangkan menjadi sistem penuh: basis data dan API, login dengan peran (admin, supervisor, picker), pemindai barcode di layar picker, integrasi ERP, peramalan permintaan, batch dan zone picking, serta studi waktu untuk mengganti asumsi waktu picking; Dikembangkan bila ada kesempatan bekerja sama.
