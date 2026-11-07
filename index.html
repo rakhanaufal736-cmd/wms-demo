@@ -1,0 +1,1320 @@
+<!doctype html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WMS-TI · Demo ERP Gudang Teknik Industri</title>
+<!-- Font IBM Plex dimuat bila online; saat offline otomatis memakai font sistem (tampilan tetap utuh). -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F8FAFC;--surface:#FFFFFF;--surface-2:#F1F5F9;--text:#0F172A;--text-2:#475569;--border:#E2E8F0;--border-strong:#CBD5E1;
+--primary:#1D4ED8;--primary-h:#1E40AF;--primary-soft:#DBEAFE;--on-primary:#FFFFFF;--link:#1D4ED8;--accent:#F59E0B;
+--success:#16A34A;--warning:#D97706;--danger:#DC2626;--info:#2563EB;
+--ok-bg:#DCFCE7;--ok-fg:#14532D;--warn-bg:#FEF3C7;--warn-fg:#78350F;--bad-bg:#FEE2E2;--bad-fg:#7F1D1D;--info-bg:#DBEAFE;--info-fg:#1E3A8A;--neu-bg:#E2E8F0;--neu-fg:#1E293B;
+--ok-t:#166534;--warn-t:#B45309;--bad-t:#B91C1C;
+--focus:#1D4ED8;--shadow:0 1px 2px rgba(15,23,42,.06),0 1px 3px rgba(15,23,42,.08);--r:8px;--tb:56px;--sb:240px;--overlay:rgba(15,23,42,.45)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B1220;--surface:#111B30;--surface-2:#17233D;--text:#E8EEF8;--text-2:#A9B7CC;--border:#263553;--border-strong:#3A4B6E;
+--primary:#2563EB;--primary-h:#1D4ED8;--primary-soft:#172A57;--link:#93C5FD;--accent:#FBBF24;
+--ok-bg:#0F3A22;--ok-fg:#BBF7D0;--warn-bg:#442A07;--warn-fg:#FDE68A;--bad-bg:#4A1414;--bad-fg:#FECACA;--info-bg:#152B5C;--info-fg:#BFDBFE;--neu-bg:#243250;--neu-fg:#E2E8F0;
+--ok-t:#86EFAC;--warn-t:#FCD34D;--bad-t:#FCA5A5;--focus:#93C5FD;--shadow:0 1px 2px rgba(0,0,0,.45);--overlay:rgba(0,0,0,.6);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0B1220;--surface:#111B30;--surface-2:#17233D;--text:#E8EEF8;--text-2:#A9B7CC;--border:#263553;--border-strong:#3A4B6E;
+--primary:#2563EB;--primary-h:#1D4ED8;--primary-soft:#172A57;--link:#93C5FD;--accent:#FBBF24;
+--ok-bg:#0F3A22;--ok-fg:#BBF7D0;--warn-bg:#442A07;--warn-fg:#FDE68A;--bad-bg:#4A1414;--bad-fg:#FECACA;--info-bg:#152B5C;--info-fg:#BFDBFE;--neu-bg:#243250;--neu-fg:#E2E8F0;
+--ok-t:#86EFAC;--warn-t:#FCD34D;--bad-t:#FCA5A5;--focus:#93C5FD;--shadow:0 1px 2px rgba(0,0,0,.45);--overlay:rgba(0,0,0,.6);color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--text)}
+body{margin:0;font:16px/1.5 'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text)}
+h1,h2,h3{margin:0;line-height:1.25}
+h1{font-size:24px;font-weight:600}h2{font-size:16px;font-weight:600}h3{font-size:14px;font-weight:600}
+p{margin:0}
+button,input,select{font:inherit;color:inherit}
+.mono,.num{font-family:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
+.num{text-align:right}
+.muted{color:var(--text-2)}
+.sm{font-size:14px}.xs{font-size:12px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
+.skip{position:absolute;left:8px;top:-48px;background:var(--primary);color:var(--on-primary);padding:8px 16px;border-radius:var(--r);z-index:100}
+.skip:focus{top:8px}
+.ic{flex:none;vertical-align:middle}
+/* shell */
+.app{display:grid;grid-template-columns:var(--sb) minmax(0,1fr);min-height:100vh}
+.app.collapsed{--sb:72px}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);position:sticky;top:0;height:100vh;display:flex;flex-direction:column;padding:12px 12px;gap:4px;overflow:hidden}
+.brand{display:flex;align-items:center;gap:12px;height:40px;padding:0 8px;margin-bottom:12px;font-weight:700;white-space:nowrap}
+.brand-mark{width:32px;height:32px;border-radius:8px;background:var(--primary);color:var(--on-primary);display:grid;place-items:center;flex:none}
+.brand small{display:block;font-weight:400;font-size:12px;color:var(--text-2);line-height:1.1}
+.nav-btn{display:flex;align-items:center;gap:12px;min-height:44px;padding:0 12px;border-radius:var(--r);border:0;background:none;color:var(--text-2);cursor:pointer;width:100%;text-align:left;white-space:nowrap;font-weight:500}
+.nav-btn:hover{background:var(--surface-2);color:var(--text)}
+.nav-btn[aria-current=page]{background:var(--primary-soft);color:var(--link);font-weight:600}
+.nav-btn .cnt{margin-left:auto;background:var(--accent);color:#0F172A;border-radius:99px;font-size:12px;font-weight:700;padding:0 8px;min-width:22px;text-align:center}
+.app.collapsed .nav-btn span.lbl,.app.collapsed .brand .bt,.app.collapsed .cnt{display:none}
+.app.collapsed .nav-btn{justify-content:center;padding:0}
+.side-foot{margin-top:auto;font-size:12px;color:var(--text-2);padding:8px}
+.app.collapsed .side-foot{display:none}
+.main-col{min-width:0}
+.topbar{position:sticky;top:0;z-index:30;height:var(--tb);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;padding:0 24px}
+.tb-sp{flex:1}
+.gsearch{position:relative;flex:0 1 420px;min-width:0}
+.gsearch input{width:100%;height:40px;padding:0 12px 0 38px;border:1px solid var(--border-strong);border-radius:var(--r);background:var(--bg)}
+.gsearch .ic{position:absolute;left:12px;top:11px;color:var(--text-2)}
+.pop{position:absolute;top:46px;left:0;right:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 8px 24px rgba(0,0,0,.18);padding:4px;z-index:40;max-height:360px;overflow:auto}
+.pop[hidden]{display:none}
+.pop button{display:flex;gap:8px;align-items:center;width:100%;border:0;background:none;text-align:left;padding:8px;min-height:44px;border-radius:6px;cursor:pointer}
+.pop button:hover{background:var(--surface-2)}
+.pop .grp{font-size:12px;color:var(--text-2);padding:8px 8px 4px}
+.notif-pop{left:auto;right:0;width:360px;top:48px}
+.wh{height:40px;border:1px solid var(--border-strong);border-radius:var(--r);background:var(--surface);padding:0 8px}
+main{padding:24px;max-width:1440px;margin:0 auto;outline:none}
+/* controls */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 16px;border-radius:var(--r);border:1px solid var(--border-strong);background:var(--surface);color:var(--text);font-weight:500;cursor:pointer;white-space:nowrap}
+.btn:hover{background:var(--surface-2)}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
+.btn.primary:hover{background:var(--primary-h)}
+.btn.danger{background:var(--danger);border-color:var(--danger);color:#fff}
+.btn.sm{min-height:36px;padding:0 12px;font-size:14px}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+.btn.icon{width:44px;padding:0;position:relative}
+.btn.ghost{border-color:transparent;background:none}
+.btn.ghost:hover{background:var(--surface-2)}
+.bdg{position:absolute;top:2px;right:0;background:var(--danger);color:#fff;border-radius:99px;font-size:11px;font-weight:700;min-width:18px;padding:0 5px;line-height:18px;text-align:center}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label,.lbl-s{font-size:14px;font-weight:500}
+.input,.select{height:40px;padding:0 12px;border:1px solid var(--border-strong);border-radius:var(--r);background:var(--surface);min-width:0}
+.input.err{border-color:var(--danger)}
+.err-t{color:var(--bad-t);font-size:12px;display:flex;gap:4px;align-items:center}
+.help{font-size:12px;color:var(--text-2)}
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:16px}
+.seg{display:inline-flex;border:1px solid var(--border-strong);border-radius:var(--r);overflow:hidden;background:var(--surface)}
+.seg label{position:relative}
+.seg input{position:absolute;opacity:0;top:0;right:0;bottom:0;left:0;cursor:pointer}
+.seg span{display:flex;align-items:center;min-height:40px;padding:0 14px;font-size:14px;font-weight:500;border-right:1px solid var(--border);cursor:pointer}
+.seg label:last-child span{border-right:0}
+.seg input:checked+span{background:var(--primary);color:var(--on-primary)}
+.seg input:focus-visible+span{outline:2px solid var(--focus);outline-offset:-2px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:16px;overflow-x:auto}
+.tab{min-height:44px;padding:0 16px;border:0;border-bottom:3px solid transparent;background:none;color:var(--text-2);font-weight:500;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.tab[aria-selected=true]{color:var(--link);border-bottom-color:var(--primary);font-weight:600}
+.tab .cnt{background:var(--accent);color:#0F172A;border-radius:99px;font-size:12px;font-weight:700;padding:0 8px}
+/* layout */
+.page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.page-head .sub{color:var(--text-2);font-size:14px;margin-top:4px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:16px;min-width:0}
+.card-h{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:16px}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:16px}
+.grid-2{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:16px;margin-bottom:16px}
+.grid-eq{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:16px}
+.split{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:16px}
+.stack{display:flex;flex-direction:column;gap:16px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+@media(max-width:1180px){.grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-2,.split,.grid-eq{grid-template-columns:minmax(0,1fr)}.grid-3{grid-template-columns:repeat(2,minmax(0,1fr))}.hide-md{display:none}}
+@media(max-width:1023px){.app{--sb:72px}.app .nav-btn span.lbl,.app .brand .bt,.app .cnt,.app .side-foot{display:none}.app .nav-btn{justify-content:center;padding:0}main{padding:16px}.topbar{padding:0 16px}.notif-pop{width:min(360px,90vw)}}
+/* KPI */
+.kpi{display:flex;flex-direction:column;gap:4px}
+.kpi-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.kpi-l{font-size:14px;color:var(--text-2);font-weight:500}
+.kpi-v{font-size:28px;font-weight:600;line-height:1.2}
+.kpi-d{font-size:13px;display:flex;align-items:center;gap:4px}
+.kpi-d.good{color:var(--ok-t)}.kpi-d.badc{color:var(--bad-t)}.kpi-d.neu{color:var(--text-2)}
+.kpi-f{display:flex;justify-content:space-between;align-items:flex-end;gap:8px;margin-top:4px}
+.spark{display:block}
+.spark polyline{stroke:var(--primary);fill:none;stroke-width:2}
+.spark circle{fill:var(--primary)}
+[data-theme=dark] .spark polyline{stroke:#93C5FD}[data-theme=dark] .spark circle{fill:#93C5FD}
+/* badges */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600;white-space:nowrap}
+.b-success{background:var(--ok-bg);color:var(--ok-fg)}.b-warning{background:var(--warn-bg);color:var(--warn-fg)}.b-danger{background:var(--bad-bg);color:var(--bad-fg)}.b-info{background:var(--info-bg);color:var(--info-fg)}.b-neutral{background:var(--neu-bg);color:var(--neu-fg)}
+.cls{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;padding:1px 6px;border-radius:4px;border:1px solid var(--border-strong);background:var(--surface-2)}
+.cls-A{border-color:var(--primary);color:var(--link)}
+/* tables */
+.tbl{width:100%;border-collapse:separate;border-spacing:0;font-size:14px}
+.tbl th{position:sticky;top:var(--tb);z-index:5;background:var(--surface-2);text-align:left;font-weight:600;padding:8px 12px;border-bottom:1px solid var(--border-strong);white-space:nowrap;font-size:13px}
+.tbl th.num{text-align:right}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr.clk{cursor:pointer}
+.tbl tbody tr:hover{background:var(--surface-2)}
+.tbl tr.sel{background:var(--primary-soft)}
+.tbl .sortb{border:0;background:none;font-weight:600;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;padding:6px 0;min-height:32px}
+.tbl.fix{table-layout:fixed}
+.td-trunc{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chk{width:20px;height:20px;accent-color:var(--primary)}
+.pager{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap}
+.empty{text-align:center;padding:40px 16px;color:var(--text-2)}
+.empty h3{color:var(--text);margin:8px 0 4px;font-size:16px}
+.skel{background:var(--surface-2);border-radius:var(--r);height:20px;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+/* alerts */
+.alert{display:flex;gap:12px;padding:12px;border:1px solid var(--border);border-radius:var(--r);border-left-width:4px}
+.alert.bad{border-left-color:var(--danger)}.alert.warn{border-left-color:var(--warning)}.alert.info{border-left-color:var(--info)}
+.alert h3{margin-bottom:2px}
+.alert ul{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:8px}
+.alert li{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:14px}
+/* charts */
+.chart-wrap{position:relative}
+.chart{width:100%;height:auto;display:block;overflow:visible}
+.chart text{fill:var(--text-2);font-size:12px;font-family:inherit}
+.chart .grid{stroke:var(--border);stroke-width:1}
+.chart .ln{fill:none;stroke:var(--primary);stroke-width:2.5}
+[data-theme=dark] .chart .ln{stroke:#93C5FD}
+.chart .tg{fill:none;stroke:var(--accent);stroke-width:2;stroke-dasharray:6 4}
+.chart .dot{fill:var(--surface);stroke:var(--primary);stroke-width:2}
+[data-theme=dark] .chart .dot{stroke:#93C5FD}
+.chart .cursor{stroke:var(--text-2);stroke-width:1;stroke-dasharray:3 3}
+.tip{position:absolute;top:0;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:6px 10px;border-radius:6px;font-size:12px;pointer-events:none;white-space:nowrap;z-index:5}
+.tip[hidden]{display:none}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--text-2);margin-bottom:8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:22px;height:0;border-top:3px solid var(--primary)}
+.sw.dash{border-top:3px dashed var(--accent)}
+.sw.box{width:14px;height:14px;border:1px solid var(--border-strong);border-radius:3px}
+.bar-a{fill:var(--primary)}
+.bar-b{fill:var(--text-2)}
+/* matrix */
+.mx{display:grid;grid-template-columns:48px repeat(3,minmax(0,1fr));gap:8px;align-items:stretch}
+.mx-h{font-size:13px;font-weight:600;color:var(--text-2);display:flex;align-items:center;justify-content:center;text-align:center}
+.mx-c{border:1px solid var(--border-strong);border-radius:var(--r);background:var(--surface);padding:10px;text-align:left;cursor:pointer;min-height:96px;display:flex;flex-direction:column;gap:2px}
+.mx-c:hover{border-color:var(--primary)}
+.mx-c[aria-pressed=true]{outline:2px solid var(--primary);outline-offset:1px;background:var(--primary-soft)}
+.mx-c b{font-size:20px}
+.mx-c .st{font-size:12px;color:var(--text-2);line-height:1.3}
+.mx-c.i1{border-left:6px solid var(--primary)}.mx-c.i2{border-left:6px solid var(--text-2)}.mx-c.i3{border-left:6px dashed var(--border-strong)}
+/* map */
+.map-wrap{position:relative}
+.map-svg{width:100%;height:auto;display:block;background:var(--surface-2);border-radius:var(--r)}
+.map-svg text{fill:var(--text);font-family:inherit}
+.rack{cursor:pointer}
+.rack rect.c{stroke:var(--surface);stroke-width:1}
+.rack:focus-visible{outline:none}
+.rack:focus-visible rect.c,.rack.sel rect.c{stroke:var(--text);stroke-width:3}
+.rack.hl rect.c{stroke:var(--accent);stroke-width:3;animation:blink 1s ease-in-out infinite}
+@keyframes blink{50%{opacity:.55}}
+.rack.empty rect.c{fill:var(--surface);stroke:var(--border-strong);stroke-dasharray:3 2}
+.zlab{font-size:13px;font-weight:700}
+.scale{display:inline-block;width:160px;height:12px;border-radius:6px;background:linear-gradient(90deg,hsl(142 62% 48%),hsl(71 62% 48%),hsl(0 62% 48%));vertical-align:middle;margin:0 6px}
+.hatch{display:inline-block;width:16px;height:16px;border:1px solid var(--border-strong);background:repeating-linear-gradient(45deg,var(--text) 0 2px,transparent 2px 6px);vertical-align:middle;margin-right:4px}
+.maptip{position:absolute;background:var(--text);color:var(--bg);padding:6px 10px;border-radius:6px;font-size:12px;pointer-events:none;z-index:5;transform:translate(-50%,-110%);white-space:nowrap}
+.maptip[hidden]{display:none}
+.dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:14px;margin:0}
+.dl dt{color:var(--text-2)}.dl dd{margin:0}
+.linkbtn{background:none;border:0;padding:6px 0;min-height:32px;color:var(--link);font:inherit;cursor:pointer;text-align:left;text-decoration:underline}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:12px;background:var(--surface-2);border:1px solid var(--border);border-radius:99px;padding:2px 10px}
+.sug{border:1px solid var(--border);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:8px}
+.sug.best{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary)}
+.progress{height:10px;border-radius:99px;background:var(--surface-2);overflow:hidden;border:1px solid var(--border)}
+.progress i{display:block;height:100%;background:var(--primary)}
+.formula{font-family:'IBM Plex Mono',monospace;font-size:13px;background:var(--surface-2);border-radius:var(--r);padding:10px 12px;line-height:1.7;overflow-wrap:anywhere}
+/* overlay */
+#overlay .scrim{position:fixed;top:0;right:0;bottom:0;left:0;background:var(--overlay);z-index:60}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(560px,100vw);background:var(--surface);z-index:61;box-shadow:-8px 0 24px rgba(0,0,0,.25);display:flex;flex-direction:column;animation:slideIn .2s ease-out}
+@keyframes slideIn{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}
+.drawer-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:16px;border-bottom:1px solid var(--border)}
+.drawer-b{padding:16px;overflow:auto;display:flex;flex-direction:column;gap:16px}
+.modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(520px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow:auto;background:var(--surface);border-radius:12px;z-index:61;padding:20px;box-shadow:0 16px 48px rgba(0,0,0,.35);animation:fadeIn .2s ease-out}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.picker{position:fixed;top:0;right:0;bottom:0;left:0;background:var(--bg);z-index:62;display:flex;flex-direction:column;padding:24px;gap:16px;overflow:auto}
+.picker .big{font-size:56px;font-weight:700;line-height:1.1}
+.picker-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:24px;width:100%;max-width:1200px;margin:auto;align-items:start}.pk-info{text-align:center}.sticky-act{position:sticky;bottom:0;background:var(--bg);padding:12px 0 4px;width:100%;max-width:1200px;margin:0 auto}.halo{paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round}.pulse{animation:blink 1s ease-in-out infinite}.lgd{display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:middle}
+@media(max-width:900px){.picker-grid{grid-template-columns:minmax(0,1fr)}}
+.picker .btn{min-height:56px;font-size:18px;padding:0 24px}
+.toasts{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:8px;z-index:80;max-width:min(380px,calc(100vw - 32px))}
+.toasts.top{bottom:auto;top:84px}
+.toast{background:var(--surface);border:1px solid var(--border-strong);border-left:4px solid var(--success);border-radius:var(--r);box-shadow:0 8px 24px rgba(0,0,0,.2);padding:12px;display:flex;gap:10px;align-items:flex-start;animation:fadeIn .2s ease-out}
+.toast.err{border-left-color:var(--danger)}.toast.info{border-left-color:var(--info)}
+.spin{width:16px;height:16px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;display:inline-block;animation:rot .7s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition:none!important}}
+@media print{.sidebar,.topbar,.actions,.btn,.tabs,.toasts,#overlay{display:none!important}.app{display:block}main{padding:0;max-width:none}.card{box-shadow:none;break-inside:avoid}body{background:#fff;color:#000}.tbl th{position:static}}
+
+.welcome{display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:16px;border-left:4px solid var(--primary)}
+.tour{position:fixed;left:calc(var(--sb) + 16px);bottom:16px;width:min(360px,calc(100vw - var(--sb) - 32px));max-height:calc(100vh - var(--tb) - 32px);overflow:auto;background:var(--surface);border:1px solid var(--border-strong);border-left:4px solid var(--accent);border-radius:var(--r);box-shadow:0 8px 24px rgba(0,0,0,.22);padding:12px 16px;z-index:45}
+.tour-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.tour-f{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.tour details summary{cursor:pointer;min-height:36px;display:flex;align-items:center;color:var(--link)}
+.tour-l{margin:0;padding-left:20px;list-style:decimal}
+.modal.wide{width:min(720px,calc(100vw - 32px))}
+.hide-sm{display:inline}
+@media(max-width:1023px){.hide-sm{display:none}}
+
+.toasts.left{right:auto;left:16px}
+
+/* ===== Ponsel (<= 640px): navigasi laci, topbar ringkas, tabel bisa digeser ===== */
+.nav-scrim{display:none}
+@media(max-width:640px){
+ .app{display:block;--sb:0px}
+ .sidebar{position:fixed;top:0;left:0;bottom:0;height:auto;width:min(280px,84vw);z-index:70;transform:translateX(-100%);visibility:hidden;transition:transform .2s ease-out,visibility 0s linear .2s;box-shadow:8px 0 24px rgba(0,0,0,.25);overflow-y:auto}
+ .app.nav-open .sidebar{transform:none;visibility:visible;transition:transform .2s ease-out,visibility 0s}
+ .app.nav-open .nav-scrim{display:block;position:fixed;top:0;right:0;bottom:0;left:0;background:var(--overlay);z-index:65}
+ .app .nav-btn span.lbl,.app.collapsed .nav-btn span.lbl,.app .brand .bt,.app.collapsed .brand .bt,.app .cnt,.app.collapsed .cnt,.app .side-foot,.app.collapsed .side-foot{display:revert}
+ .app .nav-btn,.app.collapsed .nav-btn{justify-content:flex-start;padding:0 12px}
+ .topbar{padding:0 8px;gap:4px}
+ .gsearch{flex:1 1 auto}
+ .wh,#themeBtn{display:none}
+ .gsearch .pop,.notif-pop{position:fixed;left:12px;right:12px;top:64px;width:auto;max-height:60vh}
+ main{padding:16px}
+ .grid-4,.grid-3,.grid-eq,.grid-2,.split{grid-template-columns:minmax(0,1fr)}
+ .page-head{margin-bottom:16px}
+ .page-head .actions .btn{flex:1 1 auto}
+ .card{overflow-x:auto}
+ .tbl th{position:static}
+ .chart-wrap{min-width:560px}
+ svg.chart:not(.spark){min-width:540px}
+ .chart text{font-size:15px}
+ .map-svg{min-width:700px}
+ .toasts{bottom:auto;top:64px;left:12px;right:12px;max-width:none}
+ .toasts.left,.toasts.top{left:12px;right:12px;top:64px}
+ .tour{left:12px;right:12px;bottom:12px;width:auto;max-height:55vh}
+ .picker{padding:16px}
+ .picker .big{font-size:44px}
+ .drawer{width:100vw}
+ .modal{padding:16px}
+ .mx{grid-template-columns:28px repeat(3,minmax(0,1fr));gap:4px}
+ .mx-c{padding:6px;min-height:84px}
+ .mx-c .st{display:none}
+ .mx-h{font-size:11px}
+}
+
+.demo-list{margin:0;padding-left:20px;display:grid;gap:8px;font-size:14px;list-style:disc}
+.ba-note{margin-top:8px}
+.ba-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.ba-grid .map-svg{width:100%;height:auto;display:block}
+@media(max-width:640px){.ba-grid{grid-template-columns:minmax(0,1fr)}.ba-grid .map-svg{min-width:0}}
+.tornado text{fill:var(--text)}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Lewati ke konten utama</a>
+<div class="app" id="app">
+  <aside class="sidebar" aria-label="Navigasi utama">
+    <div class="brand"><span class="brand-mark" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg></span><span class="bt">WMS-TI<small>ERP · Teknik Industri</small></span></div>
+    <nav id="nav" aria-label="Menu"></nav>
+    <div class="side-foot">Demo · data dummy<br>Tersimpan di browser ini</div>
+  </aside>
+  <div class="main-col">
+    <header class="topbar">
+      <button class="btn ghost icon" data-act="toggleSide" aria-label="Lipat atau buka sidebar"><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg></button>
+      <div class="gsearch"><label for="gs" class="sr">Pencarian global: SKU, PO, pesanan</label><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input id="gs" type="search" placeholder="Cari SKU, PO, atau pesanan…" autocomplete="off"><div class="pop" id="searchRes" hidden></div></div>
+      <div class="tb-sp"></div>
+      <button class="btn" data-act="tourToggle" aria-label="Tur demo"><svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg><span class="hide-sm">Tur demo</span></button>
+      <label class="sr" for="wh">Pilih gudang</label><select id="wh" class="wh"><option>Gudang Pusat · GP-01</option></select>
+      <div id="bellWrap" style="position:relative"><button class="btn ghost icon" id="bellBtn" data-act="toggleNotif" aria-label="Notifikasi" aria-expanded="false" aria-controls="notifPop"><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="bdg" id="bellN" hidden>0</span></button><div class="pop notif-pop" id="notifPop" hidden></div></div>
+      <button class="btn ghost icon" id="themeBtn" data-act="theme" aria-label="Ganti tema"></button>
+      <button class="btn ghost icon" data-act="openSettings" aria-label="Pengaturan"><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/><circle cx="9" cy="6" r="2" fill="currentColor"/><circle cx="15" cy="12" r="2" fill="currentColor"/><circle cx="8" cy="18" r="2" fill="currentColor"/></svg></button>
+    </header>
+    <main id="main" tabindex="-1"></main>
+  </div>
+  <div id="tour"></div>
+  <div class="nav-scrim" data-act="closeNav"></div>
+</div>
+<div id="overlay"></div>
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+<script>
+'use strict';
+/* ================= Utilitas ================= */
+const $=(s,el=document)=>el.querySelector(s);
+const nf0=new Intl.NumberFormat('id-ID',{maximumFractionDigits:0});
+const nf1=new Intl.NumberFormat('id-ID',{minimumFractionDigits:1,maximumFractionDigits:1});
+const nf2=new Intl.NumberFormat('id-ID',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmt=n=>nf0.format(n),f1=n=>nf1.format(n),f2=n=>nf2.format(n);
+const rp=n=>'Rp '+nf0.format(Math.round(n));
+const rpShort=n=>{const a=Math.abs(n);return a>=1e9?'Rp '+nf1.format(n/1e9)+' M':a>=1e6?'Rp '+nf1.format(n/1e6)+' jt':'Rp '+nf0.format(n)};
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const sum=a=>a.reduce((x,y)=>x+y,0);
+const avg=a=>a.length?sum(a)/a.length:0;
+const stdev=a=>{if(a.length<2)return 0;const m=avg(a);return Math.sqrt(sum(a.map(v=>(v-m)**2))/(a.length-1))};
+const pad=(n,w)=>String(n).padStart(w,'0');
+function hash01(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return((h>>>0)%10000)/10000}
+function rng(seed){let a=seed>>>0;return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const TODAY='2026-11-03';
+const addDays=(iso,n)=>{const d=new Date(iso+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)};
+const dFmt=iso=>new Intl.DateTimeFormat('id-ID',{day:'numeric',month:'short',timeZone:'UTC'}).format(new Date(iso+'T00:00:00Z'));
+const dFmtY=iso=>new Intl.DateTimeFormat('id-ID',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}).format(new Date(iso+'T00:00:00Z'));
+
+/* ================= Rumus teknik industri (fungsi murni) ================= */
+const Z_TABLE={90:1.28,95:1.65,97.5:1.96,99:2.33,99.5:2.58};
+const eoqF=(D,S,H)=>(D>0&&H>0&&S>0)?Math.sqrt(2*D*S/H):0;
+const ssF=(z,sd,L)=>z*sd*Math.sqrt(L);
+const ropF=(d,L,ss)=>d*L+ss;
+function classifyABC(vals){ // vals: [{id,val}] -> Map id->'A'|'B'|'C'
+  const sorted=vals.slice().sort((a,b)=>b.val-a.val),tot=sum(sorted.map(v=>v.val)),m=new Map();let cum=0;
+  sorted.forEach((v,i)=>{cum+=v.val;const sh=tot?cum/tot:1;m.set(v.id,i===0||sh<=0.80?'A':sh<=0.95?'B':'C')});return m}
+const classifyXYZ=cv=>cv<0.5?'X':cv<=1.0?'Y':'Z';
+function tripLen(pts,dock){let cx=dock.x,cy=dock.y,len=0;const rest=pts.slice();
+  while(rest.length){let bi=0,bd=1e9;rest.forEach((p,i)=>{const d=Math.abs(p.x-cx)+Math.abs(p.y-cy);if(d<bd){bd=d;bi=i}});const p=rest.splice(bi,1)[0];len+=bd;cx=p.x;cy=p.y}
+  return len+Math.abs(cx-dock.x)+Math.abs(cy-dock.y)}
+
+/* ================= Geometri gudang ================= */
+const G={ZW:24,ZH:16,CW:2.4,CH:2,GAP:4,COLS:10,ROWS:8,DOCK:{x:-3,y:18}};
+const ZONES=['A','B','C','D','E','F'];
+function buildLocs(){const locs=[];
+  ZONES.forEach((z,zi)=>{const zc=zi%3,zr=Math.floor(zi/3);
+    for(let r=1;r<=G.ROWS;r++)for(let c=1;c<=G.COLS;c++){
+      const level=((r-1)%4)+1,side=r<=4?1:2;
+      const x=zc*(G.ZW+G.GAP)+(c-0.5)*G.CW,y=zr*(G.ZH+G.GAP)+(r-0.5)*G.CH;
+      locs.push({id:`${z}${side}-${pad(c,2)}-${level}`,zone:z,zc,zr,r,c,level,x,y,dist:Math.abs(x-G.DOCK.x)+Math.abs(y-G.DOCK.y),skuId:null,units:0,cap:0})}});
+  const mx=Math.max(...locs.map(l=>l.dist));
+  locs.forEach(l=>{l.dn=l.dist/mx;l.ergo=l.level===1?0.5:(l.level===4?1:0);l.cost=0.7*l.dn+0.3*l.ergo});
+  return locs}
+
+/* ================= State data ================= */
+const VERSION='wms-ti-demo-v2',KEY='wms-ti-demo-db',THEME_KEY='wms-ti-theme';
+const DEF_SET={sl:95,S:150000,hr:0.25};
+let DB=null,IDX=null,STORAGE_OK=true;
+function reindex(){IDX={sku:new Map(DB.skus.map(s=>[s.id,s])),loc:new Map(DB.locs.map(l=>[l.id,l])),sup:new Map(DB.suppliers.map(s=>[s.id,s]))}}
+
+function recompute(){
+  const t0=performance.now(),{sl,S,hr}=DB.settings,z=Z_TABLE[sl]||1.65;
+  const items=DB.skus.map(s=>{const D=sum(s.monthly),m=D/12,sd=stdev(s.monthly);return{s,D,m,sd,val:D*s.price}});
+  const abc=classifyABC(items.map(i=>({id:i.s.id,val:i.val})));
+  items.forEach(i=>{const s=i.s,L=IDX.sup.get(s.supplierId).L,cv=i.m>0?i.sd/i.m:0,d=i.D/365,sdd=i.sd/Math.sqrt(30),H=s.price*hr;
+    const ssx=ssF(z,sdd,L),eo=Math.max(1,Math.ceil(eoqF(i.D,S,H))),rp0=ropF(d,L,ssx);
+    s.dv={D:i.D,d,sd:i.sd,sdd,cv,val:i.val,abc:abc.get(s.id),xyz:classifyXYZ(cv),L,H,z,ssx,ss:Math.ceil(ssx),eoq:eo,rop:Math.ceil(rp0),freq:i.D/s.lq}});
+  return performance.now()-t0}
+
+/* ----- Seed ----- */
+function seedDb(){
+  const R=rng(20261103);
+  const gauss=()=>{let u=0;while(u===0)u=R();const v=R();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)};
+  const rnd=(a,b)=>a+(b-a)*R(),pick=a=>a[Math.floor(R()*a.length)];
+  const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+  const suppliers=[['S01','PT Sinar Bearing Nusantara',7],['S02','PT Bautindo Mandiri',4],['S03','CV Lubrindo Jaya',5],['S04','PT Filtra Karya',10],['S05','PT Kabelindo Perkasa',14],['S06','PT Safety Prima',6],['S07','PT Global Bearing Import',21],['S08','PT Mitra Fastener',3],['S09','PT Pelumas Utama',9],['S10','PT Kabel Metal Sejahtera',18],['S11','CV Teknik Filtrasi',12],['S12','PT Pelindung Kerja Abadi',8]].map(a=>({id:a[0],name:a[1],L:a[2]}));
+  const CATSUP={'Bearing':['S01','S07'],'Baut & Mur':['S02','S08'],'Pelumas':['S03','S09'],'Filter':['S04','S11'],'Kabel':['S05','S10'],'APD':['S06','S12']};
+  const items=[];
+  const add=(cat,code,name,price,uom,base,lq)=>items.push({cat,code,name,price:Math.max(100,Math.round(price/100)*100),uom,base,lq});
+  /* Bearing 70 */
+  ['6000','6001','6002','6003','6004','6005','6200','6201','6202','6203','6204','6205','6206','6207','6208','6209','6300','6301','6302','6303','6304','6305','6306','6307'].forEach(t=>['2RS','ZZ'].forEach(s=>{const n=+t.slice(-2),k=t[1]==='3'?1.6:t[1]==='2'?1.2:1;add('Bearing',`BRG-${t}-${s}`,`Bearing bola ${t}-${s}`,(22000+n*6500)*k*(s==='2RS'?1.12:1),'pcs',90,3)}));
+  ['NU204','NU205','NU206','NU207','NU208','NU209','NU210','NU212'].forEach(t=>add('Bearing',`BRG-${t}-E`,`Bearing rol silinder ${t}E`,95000+(+t.slice(-2))*16000,'pcs',40,2));
+  ['22208','22209','22210','22211','22212','22214'].forEach(t=>add('Bearing',`BRG-${t}-E`,`Bearing rol bola ${t}E`,230000+(+t.slice(-2))*32000,'pcs',25,1));
+  ['30204','30205','30206','30207','30208','30209'].forEach(t=>add('Bearing',`BRG-${t}-J2`,`Bearing rol tirus ${t} J2`,80000+(+t.slice(-2))*11000,'pcs',35,2));
+  ['51104','51105'].forEach(t=>add('Bearing',`BRG-${t}`,`Bearing aksial ${t}`,60000+(+t.slice(-2))*5000,'pcs',20,2));
+  /* Baut & Mur 70 */
+  {const L={6:[16,25,40],8:[20,30,50],10:[25,40,60,80],12:[30,50,60,80],14:[40,60,80],16:[40,60,80,100],20:[60,80,100],24:[80,100]};
+   Object.keys(L).forEach(sz=>L[sz].forEach(len=>['8.8','10.9'].forEach(g=>add('Baut & Mur',`BMR-M${sz}x${len}-${g}`,`Baut hex M${sz}×${len} kelas ${g}`,300+sz*len*7.5*(g==='10.9'?1.5:1),'pcs',2500,50))));
+   [6,8,10,12,14,16,20,24].forEach(sz=>{add('Baut & Mur',`BMR-NUT-M${sz}`,`Mur hex M${sz} kelas 8`,150+sz*sz*10,'pcs',3000,60);add('Baut & Mur',`BMR-WSH-M${sz}`,`Ring pir M${sz} galvanis`,60+sz*sz*4,'pcs',3500,80)});
+   add('Baut & Mur','BMR-ANC-M12x120','Baut angkur M12×120',9000,'pcs',400,20);add('Baut & Mur','BMR-ANC-M16x150','Baut angkur M16×150',18000,'pcs',250,10)}
+  /* Pelumas 30 */
+  [['GRS-EP2','Grease EP2 lithium',78000,'kg'],['HYD46','Oli hidrolik ISO VG 46',38000,'L'],['HYD68','Oli hidrolik ISO VG 68',40000,'L'],['GER150','Oli gear ISO VG 150',42000,'L'],['GER220','Oli gear ISO VG 220',44000,'L'],['CMP68','Oli kompresor ISO VG 68',52000,'L'],['ENG15W40','Oli mesin 15W-40',46000,'L'],['CUTSOL','Cairan pemotong larut air',36000,'L'],['TRF32','Oli trafo ISO VG 32',55000,'L'],['CHNLUB','Pelumas rantai tahan panas',85000,'L']].forEach(p=>
+    [[5,'05',0,60,2],[20,'20',0.06,90,2],[200,'200',0.12,12,1]].forEach(k=>add('Pelumas',`PLM-${p[0]}-${k[1]}${p[3]==='kg'?'K':'L'}`,`${p[1]} ${k[0]} ${p[3]}`,p[2]*k[0]*(1-k[2]),k[0]===200?'drum':'pail',k[3],k[4])));
+  /* Filter 45 */
+  {const used=new Set();[['OIL','Filter oli spin-on',70000,8],['HYD','Filter hidrolik return line',210000,8],['AIR','Filter udara primer',180000,8],['FUL','Filter solar & separator air',95000,8],['CMP','Elemen separator kompresor',650000,7],['PNL','Elemen filter udara panel',45000,6]].forEach(t=>{let n=0;while(n<t[3]){const num=1000+Math.floor(R()*9000);if(used.has(num))continue;used.add(num);n++;add('Filter',`FLT-${t[0]}-${num}`,`${t[1]} tipe ${num}`,t[2]*rnd(.7,1.6),'pcs',60,2)}})}
+  /* Kabel 35 */
+  {const cb=[['NYY',2,2.5],['NYY',4,10],['NYY',4,16],['NYY',4,25],['NYY',4,50],['NYM',3,1.5],['NYM',3,2.5],['NYM',3,4],['NYAF',1,1.5],['NYAF',1,2.5],['NYAF',1,6],['NYAF',1,10],['NYAF',1,16],['NYYHY',4,1.5],['NYYHY',7,1.5],['NYYHY',12,1.5],['NYCY',4,16],['NYCY',4,25],['NYA',1,2.5],['NYA',1,4],['NYFGbY',4,16]];
+   const pm=c=>4000+c[1]*c[2]*2200;
+   cb.forEach(c=>add('Kabel',`KBL-${c[0]}-${c[1]}x${c[2]}-R100`,`Kabel ${c[0]} ${c[1]}×${c[2]} mm² (roll 100 m)`,pm(c)*100,'roll',14,1));
+   cb.slice(0,14).forEach(c=>add('Kabel',`KBL-${c[0]}-${c[1]}x${c[2]}-R500`,`Kabel ${c[0]} ${c[1]}×${c[2]} mm² (drum 500 m)`,pm(c)*500*.95,'drum',3,1))}
+  /* APD 50 */
+  ['Putih','Kuning','Biru','Merah'].forEach(c=>add('APD',`APD-HLM-${c.slice(0,3).toUpperCase()}`,`Helm safety HDPE ${c}`,68000,'pcs',160,4));
+  [['Katun',9000,'KTN'],['Kulit',38000,'KLT'],['Nitril',22000,'NTR'],['Anti-potong',85000,'ATP']].forEach(g=>['L','XL'].forEach(sz=>add('APD',`APD-GLV-${g[2]}-${sz}`,`Sarung tangan ${g[0]} ${sz}`,g[1],'pasang',700,12)));
+  [['Bening',28000],['Gelap',30000],['Anti-kabut',45000]].forEach(g=>add('APD',`APD-GGL-${g[0].slice(0,3).toUpperCase()}`,`Kacamata safety ${g[0]}`,g[1],'pcs',300,6));
+  [['N95 (box 20)',185000,'N95'],['Respirator half-face',320000,'RSP'],['Katup karbon (box 10)',140000,'KRB'],['Cartridge filter',95000,'CRT']].forEach(g=>add('APD',`APD-MSK-${g[2]}`,`Masker ${g[0]}`,g[1],'pcs',90,3));
+  [['Earplug (box 100)',90000,'EPL'],['Earmuff SNR 27',145000,'EM27'],['Earmuff SNR 31',210000,'EM31']].forEach(g=>add('APD',`APD-EAR-${g[2]}`,g[0],g[1],'pcs',60,2));
+  ['M','L','XL'].forEach(sz=>add('APD',`APD-VST-${sz}`,`Rompi reflektif ${sz}`,52000,'pcs',120,4));
+  [39,40,41,42,43,44,45].forEach(sz=>{add('APD',`APD-SHO-L${sz}`,`Sepatu safety rendah no. ${sz}`,395000,'pasang',40,1);add('APD',`APD-SHO-B${sz}`,`Sepatu safety boot no. ${sz}`,520000,'pasang',40,1)});
+  ['M','L','XL','XXL'].forEach(sz=>add('APD',`APD-CVR-${sz}`,`Coverall kerja ${sz}`,165000,'pcs',90,2));
+  ['S','M','L'].forEach(sz=>add('APD',`APD-HRN-${sz}`,`Full body harness ${sz}`,680000,'pcs',20,1));
+  ['M','L','XL','XXL'].forEach(sz=>add('APD',`APD-RAN-${sz}`,`Jas hujan ${sz}`,78000,'pcs',80,3));
+
+  const skus=items.map((it,i)=>{
+    const D0=it.base*Math.exp(gauss()*0.85-0.3),m=D0/12,r=R(),noise=r<.45?rnd(.12,.38):r<.75?rnd(.45,.85):rnd(1,1.9),amp=rnd(.05,.25),ph=rnd(0,12);
+    const monthly=Array.from({length:12},(_,k)=>Math.max(0,Math.round(m*(1+amp*Math.sin(2*Math.PI*(k+ph)/12)+noise*gauss()))));
+    if(sum(monthly)===0)monthly[11]=1;
+    return{id:'K'+pad(i+1,3),code:it.code,name:it.name,cat:it.cat,uom:it.uom,price:it.price,monthly,lq:Math.max(1,Math.round(it.lq*Math.exp(gauss()*.3))),supplierId:pick(CATSUP[it.cat]),staging:0,locIds:[],cap:0,ageD:Math.round(rnd(3,190))}});
+
+  DB={v:VERSION,settings:{...DEF_SET},suppliers,skus,locs:buildLocs(),pos:[],orders:[],tasks:[],moves:[],variances:[],wave:null,kpi:{},cycle:{counted:600,matched:590,batch:0,ptr:{A:0,B:0,C:0}},d2s:[],pickLog:[],layout0:{},seq:{po:420,pt:4,wv:1,so:1261}};
+  reindex();recompute();
+
+  /* anomali sengaja */
+  const A=skus.filter(s=>s.dv.abc==='A').sort((a,b)=>b.dv.val-a.dv.val),B=shuffle(skus.filter(s=>s.dv.abc==='B'));
+  const crit=new Set([A[3],A[8],A[14]].filter(Boolean).map(s=>s.id).concat(B.slice(0,5).map(s=>s.id)));
+  const nonCrit=shuffle(skus.filter(s=>!crit.has(s.id)));
+  const over=new Set(nonCrit.slice(0,3).map(s=>s.id));
+  const overstock=new Set(nonCrit.filter(s=>!over.has(s.id)&&s.dv.abc==='C').slice(0,12).map(s=>s.id));
+  const twoSet=new Set([...overstock,...nonCrit.filter(s=>!over.has(s.id)&&!overstock.has(s.id)).slice(0,84-overstock.size).map(s=>s.id)]);
+  skus.forEach(s=>{const v=s.dv;let stock;
+    if(crit.has(s.id))stock=Math.max(1,Math.round(v.rop*rnd(.3,.8)));
+    else if(overstock.has(s.id))stock=Math.round((v.rop+v.eoq)*rnd(1.3,2));
+    else stock=Math.max(v.rop+1,Math.ceil(v.rop+v.eoq*rnd(.05,.55)));
+    const nLoc=twoSet.has(s.id)?2:1;let cap=Math.ceil(Math.max(v.rop+v.eoq,stock)*1.1/nLoc);
+    if(over.has(s.id))cap=Math.max(stock,Math.floor(stock/0.97));
+    s.cap=Math.max(1,cap);s._stock=stock;s._n=nLoc});
+  /* penempatan awal (semi-acak, agar slotting punya ruang perbaikan) */
+  const rank=new Map(skus.slice().sort((a,b)=>b.dv.freq-a.dv.freq).map((s,i)=>[s.id,i/skus.length]));
+  const jit=new Map(skus.map(s=>[s.id,rank.get(s.id)+gauss()*.55])),order=skus.slice().sort((a,b)=>jit.get(a.id)-jit.get(b.id)); /* noise dihitung sekali per SKU: hasil sama di semua browser */
+  const byCost=DB.locs.slice().sort((a,b)=>a.cost-b.cost);
+  order.forEach((s,i)=>{const l=byCost[i],u1=Math.min(s.cap,Math.ceil(s._stock/s._n));l.skuId=s.id;l.units=u1;l.cap=s.cap;s.locIds=[l.id];s._u2=s._stock-u1;DB.layout0[s.id]=l.id});
+  const free=shuffle(DB.locs.filter(l=>!l.skuId));
+  skus.forEach(s=>{if(s._n===2){const l=free.pop();l.skuId=s.id;l.units=Math.min(s.cap,s._u2);l.cap=s.cap;s.locIds.push(l.id)}delete s._stock;delete s._n;delete s._u2});
+
+  /* PO 40 */
+  const supSk=id=>skus.filter(s=>s.supplierId===id&&!crit.has(s.id));
+  let sts=shuffle([...Array(12).fill('selesai'),...Array(8).fill('sebagian'),...Array(5).fill('terlambat'),...Array(15).fill('terbuka')]);
+  const fi=sts.indexOf('terbuka');[sts[fi],sts[32]]=[sts[32],sts[fi]];
+  for(let i=0;i<40;i++){const sup=pick(suppliers),st=sts[i],list=supSk(sup.id);
+    const n=Math.min(list.length,i===32?3:2+Math.floor(R()*3)),ch=shuffle(list).slice(0,n);
+    const lines=ch.map(s=>({skuId:s.id,qty:Math.max(2,Math.ceil(s.dv.eoq*rnd(.6,1.2))),recv:0}));
+    let eta;
+    if(st==='selesai'){eta=addDays(TODAY,-Math.round(rnd(3,60)));lines.forEach(l=>l.recv=l.qty)}
+    else if(st==='terlambat'){eta=addDays(TODAY,-Math.round(rnd(1,12)));if(i%2)lines[0].recv=Math.floor(lines[0].qty*.3)}
+    else if(st==='sebagian'){eta=addDays(TODAY,Math.round(rnd(0,5)));lines[0].recv=Math.max(1,Math.floor(lines[0].qty*rnd(.4,.7)))}
+    else eta=i===32?TODAY:addDays(TODAY,Math.round(rnd(0,14)));
+    DB.pos.push({id:'PO-26-'+pad(380+i,4),supplierId:sup.id,date:addDays(eta,-sup.L),eta,lines})}
+  DB.pos.sort((a,b)=>b.id<a.id?-1:1);
+  /* Pesanan 60 */
+  const cust=['PT Tirta Manufaktur','CV Mitra Teknik','PT Baja Kencana','PT Nusa Plastindo','PT Agro Mulia Pangan','PT Semen Citra Lestari','CV Prima Otomotif','PT Garmen Surya','PT Logam Perkasa','PT Kertas Nusantara','PT Es Dingin Sejahtera','PT Tekstil Raya','CV Bengkel Maju Jaya','PT Pelayaran Samudra'];
+  const cum=[];let acc=0;skus.forEach(s=>{acc+=s.dv.freq;cum.push(acc)});
+  const wpick=()=>{const x=R()*acc;let lo=0,hi=cum.length-1;while(lo<hi){const mid=(lo+hi)>>1;if(cum[mid]<x)lo=mid+1;else hi=mid}return skus[lo]};
+  const ost=shuffle([...Array(33).fill('Dikirim'),...Array(3).fill('Siap kirim'),...Array(24).fill('Baru')]);
+  const badIdx=ost.indexOf('Dikirim');
+  for(let i=0;i<60;i++){const nl=2+Math.floor(R()*5),seen=new Set(),lines=[];let g=0;
+    while(lines.length<nl&&g++<50){const s=wpick();if(seen.has(s.id))continue;seen.add(s.id);lines.push({skuId:s.id,qty:Math.max(1,Math.round(s.lq*(.6+.8*R())))})}
+    const o={id:'SO-26-'+(1201+i),customer:pick(cust),lines,status:ost[i],ageH:Math.round(rnd(1,20))};
+    if(o.status==='Dikirim'){o.cycleH=+rnd(10,28).toFixed(1);o.perfect=i!==badIdx}
+    DB.orders.push(o)}
+  DB.orders.sort((a,b)=>a.id<b.id?-1:1);
+  DB.d2s=Array.from({length:30},()=>+rnd(2.4,4.2).toFixed(1));
+  {const shp=DB.orders.filter(o=>o.status==='Dikirim');
+   for(let i=0;i<shp.length;i+=3){const grp=shp.slice(i,i+3),seen=new Set(),pts=[];let lines=0;
+     grp.forEach(o=>{lines+=o.lines.length;o.lines.forEach(l=>{const loc=IDX.loc.get(IDX.sku.get(l.skuId).locIds[0]);if(!seen.has(loc.id)){seen.add(loc.id);pts.push(loc)}})});
+     const dist=tripLen(pts,G.DOCK);DB.pickLog.push({lines,dist,min:tripMin(dist,lines)})}}
+  /* putaway tertunda (3) */
+  const done=DB.pos.filter(p=>poStatus(p)==='Selesai');
+  shuffle(skus.filter(s=>!crit.has(s.id)&&s.dv.abc!=='C')).slice(0,3).forEach((s,i)=>{const q=Math.max(2,Math.ceil(s.dv.eoq*.4));s.staging+=q;DB.tasks.push({id:'PT-'+pad(i+1,4),poId:done[i%done.length].id,skuId:s.id,qty:q})});
+  /* KPI 30 hari */
+  const now=kpiNow(),ser=(cur,start,nz)=>Array.from({length:30},(_,i)=>{const t=i/29;return +(start+(cur-start)*t+gauss()*nz*(1-.3*t)).toFixed(2)});
+  DB.kpi={acc:ser(now.acc,96.4,.25),turn:ser(now.turn,now.turn*.96,now.turn*.015),util:ser(now.util,now.util-3,.6),oct:ser(now.oct,now.oct+1.6,.7),d2s:ser(now.d2s,now.d2s+.6,.25),por:ser(now.por,now.por-1.5,.6),pph:ser(now.pph,55.2,.9)};
+  return DB}
+
+/* ================= Selektor ================= */
+const poStatus=p=>{const done=p.lines.every(l=>l.recv>=l.qty);if(done)return'Selesai';if(p.eta<TODAY)return'Terlambat';return p.lines.some(l=>l.recv>0)?'Sebagian':'Terbuka'};
+const poOut=l=>Math.max(0,l.qty-l.recv);
+function onOrderMap(){const m=new Map();DB.pos.forEach(p=>{if(poStatus(p)!=='Selesai')p.lines.forEach(l=>{const o=poOut(l);if(o>0)m.set(l.skuId,(m.get(l.skuId)||0)+o)})});return m}
+const skuLocs=s=>s.locIds.map(id=>IDX.loc.get(id));
+const onHand=s=>sum(skuLocs(s).map(l=>l.units))+(s.staging||0);
+function stockStatus(s,oo){const v=s.dv,h=onHand(s),o=(oo?oo.get(s.id):0)||0;
+  if(h+o<=v.rop)return'Kritis';if(h<=v.rop)return'Menunggu PO';if(h<v.rop+0.2*v.eoq)return'Rendah';if(h>(v.rop+v.eoq)*1.15)return'Berlebih';return'Normal'}
+const criticalSkus=()=>{const oo=onOrderMap();return DB.skus.filter(s=>stockStatus(s,oo)==='Kritis').sort((a,b)=>b.dv.val-a.dv.val)};
+const recQty=s=>Math.ceil(Math.max(s.dv.eoq,s.dv.rop+s.dv.eoq-(onHand(s)+(onOrderMap().get(s.id)||0))));
+/* Model waktu picking: jalan + ambil per baris + persiapan per trip (menit) */
+const PK={walk:72,line:0.63,setup:2};
+const tripMin=(dist,lines)=>dist/PK.walk+lines*PK.line+PK.setup;
+const pphNow=()=>{const m=sum(DB.pickLog.map(p=>p.min));return m?60*sum(DB.pickLog.map(p=>p.lines))/m:0};
+/* Cycle count: kelas A dihitung lebih sering (4 A : 3 B : 1 C per sesi) */
+const CC_MIX={A:4,B:3,C:1};
+function ccBatch(){const cl={A:[],B:[],C:[]};DB.locs.forEach(l=>{if(l.skuId)cl[IDX.sku.get(l.skuId).dv.abc].push(l)});
+  const rows=[];['A','B','C'].forEach(k=>{const arr=cl[k].sort((a,b)=>a.id<b.id?-1:1);if(!arr.length)return;for(let j=0;j<CC_MIX[k];j++)rows.push(arr[(DB.cycle.ptr[k]+j)%arr.length])});
+  let mis=-1;if(DB.cycle.batch===0)mis=rows.findIndex((l,i)=>i<CC_MIX.A&&l.units>=2);
+  return rows.map((l,i)=>({locId:l.id,skuId:l.skuId,sys:l.units,phys:i===mis?l.units-1:l.units}))}
+function ccApply(entries){let matched=0,fixed=0;
+  entries.forEach(e=>{const l=IDX.loc.get(e.locId),sys=l.units,s=IDX.sku.get(l.skuId);
+    if(e.phys===sys)matched++;else{l.units=e.phys;if(e.phys>l.cap)l.cap=e.phys;fixed++;DB.moves.unshift({d:TODAY,type:'Koreksi',skuId:s.id,qty:e.phys-sys,ref:'Cycle count '+e.locId})}});
+  const cnt={A:0,B:0,C:0};entries.forEach(e=>{cnt[IDX.sku.get(IDX.loc.get(e.locId).skuId).dv.abc]++});['A','B','C'].forEach(k=>DB.cycle.ptr[k]+=cnt[k]);
+  DB.cycle.counted+=entries.length;DB.cycle.matched+=matched;DB.cycle.batch++;
+  return{counted:entries.length,matched,fixed,acc:DB.cycle.matched/DB.cycle.counted*100}}
+/* Analisis persediaan: komposisi nilai stok dan dampak service level (estimasi) */
+function invInsight(){let tot=0,ssv=0,zi=0,zc=0,xi=0,xc=0,zn=0;
+  DB.skus.forEach(s=>{const h=onHand(s)*s.price,c=s.dv.D*s.price;tot+=h;ssv+=s.dv.ss*s.price;if(s.dv.xyz==='Z'){zi+=h;zc+=c;zn++}if(s.dv.xyz==='X'){xi+=h;xc+=c}});
+  return{tot,ssShare:tot?ssv/tot:0,zShare:tot?zi/tot:0,zTurn:zi?zc/zi:0,xTurn:xi?xc/xi:0,zN:zn}}
+function slScenarios(){const cogs=sum(DB.skus.map(s=>s.dv.D*s.price)),inv=sum(DB.skus.map(s=>onHand(s)*s.price));
+  return[90,95,97.5,99,99.5].map(sl=>{const z=Z_TABLE[sl];let ssVal=0,d=0;
+    DB.skus.forEach(s=>{const v=s.dv,ss=Math.ceil(ssF(z,v.sdd,v.L));ssVal+=ss*s.price;d+=(ss-v.ss)*s.price});
+    return{sl,ssVal,dInv:d,turn:cogs/Math.max(1,inv+d),cur:sl===DB.settings.sl}})}
+/* Verifikasi rumus: kasus dengan jawaban hitung manual */
+const VERIFY_CASES=[
+ {g:'EOQ',n:'EOQ dasar',inp:'D = 1.200 · S = 100.000 · H = 6.000',hand:'√(2·1200·100000 ÷ 6000) = √40000',exp:200,run:()=>eoqF(1200,100000,6000)},
+ {g:'EOQ',n:'EOQ kedua',inp:'D = 5.000 · S = 50.000 · H = 2.000',hand:'√(2·5000·50000 ÷ 2000) = √250000',exp:500,run:()=>eoqF(5000,50000,2000)},
+ {g:'EOQ',n:'Permintaan nol tidak error',inp:'D = 0',hand:'tidak ada kebutuhan, EOQ = 0',exp:0,run:()=>eoqF(0,100000,6000)},
+ {g:'SS',n:'Safety stock 95%',inp:'Z = 1,65 · σd = 4 · L = 9',hand:'1,65 × 4 × √9 = 1,65 × 4 × 3',exp:19.8,run:()=>ssF(1.65,4,9),tol:1e-9},
+ {g:'SS',n:'Safety stock 99%',inp:'Z = 2,33 · σd = 10 · L = 4',hand:'2,33 × 10 × √4 = 2,33 × 10 × 2',exp:46.6,run:()=>ssF(2.33,10,4),tol:1e-9},
+ {g:'ROP',n:'ROP dasar',inp:'d = 10 · L = 9 · SS = 19,8',hand:'10 × 9 + 19,8',exp:109.8,run:()=>ropF(10,9,19.8),tol:1e-9},
+ {g:'ROP',n:'ROP kedua',inp:'d = 2,5 · L = 4 · SS = 5',hand:'2,5 × 4 + 5',exp:15,run:()=>ropF(2.5,4,5),tol:1e-9},
+ {g:'Z',n:'Faktor Z untuk 90 / 95 / 99%',inp:'tabel service level',hand:'1,28 · 1,65 · 2,33',exp:'1,28 / 1,65 / 2,33',run:()=>[90,95,99].map(k=>f2(Z_TABLE[k])).join(' / ')},
+ {g:'ABC',n:'Batas 80% / 95% kumulatif',inp:'nilai pemakaian 50, 30, 10, 5, 3, 2',hand:'kumulatif 50, 80, 90, 95, 98, 100% → A sampai 80%, B sampai 95%',exp:'A A B B C C',run:()=>{const m=classifyABC([50,30,10,5,3,2].map((v,i)=>({id:i,val:v})));return[0,1,2,3,4,5].map(i=>m.get(i)).join(' ')}},
+ {g:'XYZ',n:'Batas CV 0,5 dan 1,0',inp:'CV = 0,49 · 0,50 · 1,00 · 1,01',hand:'<0,5 → X · 0,5 sampai 1,0 → Y · >1,0 → Z',exp:'X Y Y Z',run:()=>[0.49,0.5,1.0,1.01].map(classifyXYZ).join(' ')},
+ {g:'XYZ',n:'Koefisien variasi (simpangan baku sampel)',inp:'12 bulan: enam kali 8 dan enam kali 12',hand:'μ = 10 · s = √(12×4 ÷ 11) = 2,0889 → CV = 0,2089',exp:0.2089,run:()=>{const a=[8,8,8,8,8,8,12,12,12,12,12,12];return+(stdev(a)/avg(a)).toFixed(4)}},
+ {g:'Rute',n:'Jarak rute nearest-neighbor',inp:'dock (−3, 18) · titik (−3, 10) dan (5, 10)',hand:'dock→(−3,10) = 8 · →(5,10) = 8 · kembali ke dock = 16 · total 32 m',exp:32,run:()=>tripLen([{x:-3,y:10},{x:5,y:10}],{x:-3,y:18}),tol:1e-9}];
+function verifyRun(){const rows=VERIFY_CASES.map(c=>{const act=c.run(),pass=typeof c.exp==='number'?Math.abs(act-c.exp)<=(c.tol||1e-9):act===c.exp;return{...c,act,pass}});
+  return{rows,pass:rows.filter(r=>r.pass).length,total:rows.length}}
+/* Cek silang data nyata: hitung ulang dari data mentah tanpa memakai fungsi rumus di atas */
+function verifySkus(){const{S,hr,sl}=DB.settings,z=Z_TABLE[sl];
+  const out=[0,70,140,210,280].map(i=>DB.skus[Math.min(i,DB.skus.length-1)]).map(s=>{
+    let tot=0;for(const x of s.monthly)tot+=x;const mean=tot/12;let q=0;for(const x of s.monthly)q+=(x-mean)*(x-mean);
+    const sd=Math.sqrt(q/11),L=IDX.sup.get(s.supplierId).L,H=s.price*hr,sdd=sd/Math.sqrt(30),ssx=z*sdd*Math.sqrt(L),cv=sd/mean;
+    const ref={eoq:Math.max(1,Math.ceil(Math.sqrt(2*tot*S/H))),ss:Math.ceil(ssx),rop:Math.ceil(tot/365*L+ssx),xyz:cv<0.5?'X':cv<=1?'Y':'Z',cv},app={eoq:s.dv.eoq,ss:s.dv.ss,rop:s.dv.rop,xyz:s.dv.xyz};
+    return{s,D:tot,L,ref,app,pass:ref.eoq===app.eoq&&ref.ss===app.ss&&ref.rop===app.rop&&ref.xyz===app.xyz}});
+  return{rows:out,pass:out.filter(r=>r.pass).length,total:out.length}}
+/* Baris CSV untuk cek silang di spreadsheet (kolom selisih harus 0) */
+function verifyCsvRows(){const{S,hr,sl}=DB.settings,z=Z_TABLE[sl];
+  const head=['Kode SKU','M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12','Harga','Lead time (hari)','S biaya pesan','H fraksi harga/tahun','Z','EOQ app','SS app','ROP app','D (sheet)','Simpangan baku bulanan (sheet)','EOQ (sheet)','SS (sheet)','ROP (sheet)','Selisih EOQ','Selisih SS','Selisih ROP'];
+  return[head,...DB.skus.map((s,i)=>{const r=i+2;return[s.code,...s.monthly,s.price,s.dv.L,S,hr,z,s.dv.eoq,s.dv.ss,s.dv.rop,
+    `=SUM(B${r}:M${r})`,`=STDEV(B${r}:M${r})`,`=MAX(1,ROUNDUP(SQRT(2*V${r}*P${r}/(N${r}*Q${r})),0))`,
+    `=ROUNDUP(R${r}*(W${r}/SQRT(30))*SQRT(O${r}),0)`,`=ROUNDUP(V${r}/365*O${r}+R${r}*(W${r}/SQRT(30))*SQRT(O${r}),0)`,`=X${r}-S${r}`,`=Y${r}-T${r}`,`=Z${r}-U${r}`]})]}
+function kpiNow(){
+  const sh=DB.orders.filter(o=>o.status==='Dikirim'),occ=DB.locs.filter(l=>l.skuId).length;
+  const cogs=sum(DB.skus.map(s=>s.dv.D*s.price)),inv=sum(DB.skus.map(s=>onHand(s)*s.price));
+  return{acc:DB.cycle.matched/DB.cycle.counted*100,turn:inv?cogs/inv:0,util:occ/DB.locs.length*100,oct:avg(sh.map(o=>o.cycleH)),d2s:avg(DB.d2s),por:sh.length?sh.filter(o=>o.perfect).length/sh.length*100:0,pph:pphNow()}}
+
+/* ================= Aksi data ================= */
+function suggestLocations(s,qty){
+  const desired={A:0.05,B:0.45,C:0.85}[s.dv.abc],c=[];
+  DB.locs.forEach(l=>{let free=0,cons=false;
+    if(l.skuId===s.id){free=l.cap-l.units;cons=true}else if(!l.skuId)free=s.cap;
+    if(free<=0)return;
+    const score=Math.abs(l.cost-desired)+(free>=qty?0:0.25)+(cons?-0.12:0);
+    c.push({l,free,cons,score})});
+  c.sort((a,b)=>a.score-b.score);return c.slice(0,3)}
+function placeTask(taskId,locId){
+  const t=DB.tasks.find(x=>x.id===taskId),s=t&&IDX.sku.get(t.skuId),l=IDX.loc.get(locId);
+  if(!t||!l)return{error:'Tugas atau lokasi tidak ditemukan'};
+  if(l.skuId&&l.skuId!==s.id)return{error:'Lokasi sudah dipakai SKU lain'};
+  if(!l.skuId){l.skuId=s.id;l.cap=s.cap;l.units=0;s.locIds.push(l.id)}
+  const free=l.cap-l.units,q=Math.min(t.qty,free);if(q<=0)return{error:'Lokasi sudah penuh'};
+  l.units+=q;t.qty-=q;s.staging=Math.max(0,s.staging-q);
+  DB.moves.unshift({d:TODAY,type:'Putaway',skuId:s.id,qty:q,ref:locId});
+  let done=false;
+  if(t.qty<=0){DB.tasks=DB.tasks.filter(x=>x.id!==t.id);done=true;DB.d2s.push(+(1.8+hash01(t.id)*2.8).toFixed(1));if(DB.d2s.length>30)DB.d2s.shift()}
+  return{placed:q,left:t.qty,done,loc:l}}
+function receivePO(poId,entries){
+  const po=DB.pos.find(p=>p.id===poId);let tasks=0,units=0,vars=0;
+  entries.forEach(e=>{const ln=po.lines[e.idx],s=IDX.sku.get(ln.skuId),exp=poOut(ln);
+    if(e.qty>0){ln.recv+=e.qty;s.staging+=e.qty;units+=e.qty;DB.tasks.push({id:'PT-'+pad(DB.seq.pt++,4),poId,skuId:s.id,qty:e.qty});tasks++;DB.moves.unshift({d:TODAY,type:'Masuk',skuId:s.id,qty:e.qty,ref:poId})}
+    if(e.qty!==exp){vars++;DB.variances.unshift({poId,skuId:s.id,expected:exp,got:e.qty,reason:e.reason})}});
+  return{tasks,units,vars}}
+function approvePO(rows){
+  const g=new Map();rows.forEach(r=>{const s=IDX.sku.get(r.skuId);if(!g.has(s.supplierId))g.set(s.supplierId,[]);g.get(s.supplierId).push({skuId:r.skuId,qty:r.qty,recv:0})});
+  const out=[];g.forEach((lines,sid)=>{const sup=IDX.sup.get(sid),po={id:'PO-26-'+pad(DB.seq.po++,4),supplierId:sid,date:TODAY,eta:addDays(TODAY,sup.L),lines,approved:true};DB.pos.unshift(po);out.push(po)});
+  return out}
+function createWave(orderIds){
+  const orders=orderIds.map(id=>DB.orders.find(o=>o.id===id)),need=new Map(),who=new Map();
+  orders.forEach(o=>o.lines.forEach(l=>{need.set(l.skuId,(need.get(l.skuId)||0)+l.qty);if(!who.has(l.skuId))who.set(l.skuId,[]);who.get(l.skuId).push(o.id)}));
+  const stops=[];
+  need.forEach((qty,sid)=>{const s=IDX.sku.get(sid);let rest=qty;
+    for(const l of skuLocs(s)){if(rest<=0)break;const q=Math.min(l.units,rest);if(q>0){stops.push({locId:l.id,skuId:sid,qty:q,orders:who.get(sid),done:false});rest-=q}}
+    if(rest>0){const l0=skuLocs(s)[0];stops.push({locId:l0.id,skuId:sid,qty:0,short:rest,orders:who.get(sid),done:false})}});
+  const dock=G.DOCK,P=st=>IDX.loc.get(st.locId);
+  const naive=tripLen(stops.map(P),dock); // dihitung sebagai rute urutan dokumen
+  let naiveLen=0,cx=dock.x,cy=dock.y;stops.forEach(st=>{const p=P(st);naiveLen+=Math.abs(p.x-cx)+Math.abs(p.y-cy);cx=p.x;cy=p.y});naiveLen+=Math.abs(cx-dock.x)+Math.abs(cy-dock.y);
+  const rest=stops.slice(),route=[];cx=dock.x;cy=dock.y;let dist=0;
+  while(rest.length){let bi=0,bd=1e9;rest.forEach((st,i)=>{const p=P(st),d=Math.abs(p.x-cx)+Math.abs(p.y-cy);if(d<bd){bd=d;bi=i}});const st=rest.splice(bi,1)[0],p=P(st);dist+=bd;cx=p.x;cy=p.y;route.push(st)}
+  dist+=Math.abs(cx-dock.x)+Math.abs(cy-dock.y);
+  orders.forEach(o=>o.status='Dalam wave');
+  DB.wave={id:'WV-'+pad(DB.seq.wv++,3),orderIds:orderIds.slice(),stops:route,dist,naiveDist:naiveLen,state:'aktif',lines:sum(orders.map(o=>o.lines.length))};
+  return DB.wave}
+function confirmStop(i){
+  const w=DB.wave,st=w&&w.stops[i];if(!st||st.done)return null;
+  const s=IDX.sku.get(st.skuId),l=IDX.loc.get(st.locId);l.units=Math.max(0,l.units-st.qty);st.done=true;
+  if(st.qty>0)DB.moves.unshift({d:TODAY,type:'Keluar',skuId:s.id,qty:st.qty,ref:w.id});
+  if(w.stops.every(x=>x.done)){w.state='selesai';DB.pickLog.push({lines:w.lines,dist:w.dist,min:tripMin(w.dist,w.lines)});w.orderIds.forEach(id=>{const o=DB.orders.find(x=>x.id===id);o.status='Siap kirim';o.short=w.stops.some(x=>x.short&&x.orders.includes(id))})}
+  return{wave:w,finished:w.state==='selesai'}}
+function shipOrder(id){const o=DB.orders.find(x=>x.id===id);if(!o||o.status!=='Siap kirim')return false;
+  o.status='Dikirim';o.cycleH=+(o.ageH+2+hash01(id)*2).toFixed(1);o.perfect=!o.short&&o.cycleH<=24;return true}
+function proposeLayout(){
+  const prim=DB.skus.map(s=>({s,l:IDX.loc.get(s.locIds[0])})),locs=prim.map(p=>p.l).sort((a,b)=>a.cost-b.cost),sk=prim.map(p=>p.s).sort((a,b)=>b.dv.freq-a.dv.freq),m=new Map();
+  sk.forEach((s,i)=>m.set(s.id,locs[i]));return m}
+function proposeLayoutLimited(maxSkus){
+  if(!maxSkus)return proposeLayout();
+  const m=currentLayout(),sk=DB.skus,fq=sk.map(s=>s.dv.freq),loc=sk.map(s=>m.get(s.id)),used=new Set(),swaps=Math.floor(maxSkus/2);
+  for(let k=0;k<swaps;k++){let bi=-1,bj=-1,bg=0;
+    for(let i=0;i<sk.length;i++){if(used.has(i))continue;for(let j=0;j<sk.length;j++){if(i===j||used.has(j))continue;const g=(fq[i]-fq[j])*(loc[i].cost-loc[j].cost);if(g>bg){bg=g;bi=i;bj=j}}}
+    if(bi<0)break;const t=loc[bi];loc[bi]=loc[bj];loc[bj]=t;used.add(bi);used.add(bj)}
+  const out=new Map();sk.forEach((s,i)=>out.set(s.id,loc[i]));return out}
+const currentLayout=()=>{const m=new Map();DB.skus.forEach(s=>m.set(s.id,IDX.loc.get(s.locIds[0])));return m};
+function simDistance(map){let tot=0;DB.orders.forEach(o=>{const seen=new Set(),pts=[];o.lines.forEach(l=>{const loc=map.get(l.skuId);if(loc&&!seen.has(loc.id)){seen.add(loc.id);pts.push(loc)}});tot+=tripLen(pts,G.DOCK)});return tot}
+function applyLayout(map){
+  const cont=DB.skus.map(s=>{const l=IDX.loc.get(s.locIds[0]);return{s,units:l.units,cap:l.cap}});
+  cont.forEach(c=>{const l=IDX.loc.get(c.s.locIds[0]);l.skuId=null;l.units=0;l.cap=0});
+  cont.forEach(c=>{const l=map.get(c.s.id);l.skuId=c.s.id;l.units=c.units;l.cap=c.cap;c.s.locIds[0]=l.id})}
+const layout0Map=()=>{const m=new Map();DB.skus.forEach(s=>m.set(s.id,IDX.loc.get(DB.layout0[s.id])));return m};
+
+/* ================= Before/after slotting ================= */
+function tripOrder(pts,dock){let cx=dock.x,cy=dock.y;const rest=pts.slice(),out=[];
+  while(rest.length){let bi=0,bd=1e9;rest.forEach((p,i)=>{const d=Math.abs(p.x-cx)+Math.abs(p.y-cy);if(d<bd){bd=d;bi=i}});const p=rest.splice(bi,1)[0];out.push(p);cx=p.x;cy=p.y}
+  return out}
+function orderTrips(map){return DB.orders.map(o=>{const seen=new Set(),pts=[];o.lines.forEach(l=>{const loc=map.get(l.skuId);if(loc&&!seen.has(loc.id)){seen.add(loc.id);pts.push(loc)}});return{id:o.id,nl:o.lines.length,pts,dist:tripLen(pts,G.DOCK)}})}
+function zoneLoad(map){const z={};ZONES.forEach(k=>z[k]=0);let t=0;DB.skus.forEach(s=>{const l=map.get(s.id);z[l.zone]+=s.dv.freq;t+=s.dv.freq});ZONES.forEach(k=>z[k]=t?z[k]/t*100:0);return z}
+function beforeAfter(prop){
+  const cm=currentLayout(),cur=orderTrips(cm),aft=orderTrips(prop),n=Math.max(1,cur.length),
+    lines=sum(cur.map(t=>t.nl))/n,dC=sum(cur.map(t=>t.dist))/n,dA=sum(aft.map(t=>t.dist))/n,mC=tripMin(dC,lines),mA=tripMin(dA,lines);
+  let bi=-1,bg=0;cur.forEach((t,i)=>{const g=t.dist-aft[i].dist;if(t.pts.length>=3&&g>bg){bg=g;bi=i}});
+  return{n:cur.length,lines,dC,dA,mC,mA,pC:60/mC,pA:60/mA,zC:zoneLoad(cm),zA:zoneLoad(prop),ex:bi<0?null:{c:cur[bi],a:aft[bi]}}}
+
+/* ================= Analisis sensitivitas persediaan ================= */
+const tcF=(D,S,H,Q)=>Q>0?D/Q*S+Q/2*H:0; // biaya pesan + simpan stok siklus per tahun
+const SENS_PARAMS=[['D','Level permintaan (CV tetap)'],['sd','Variabilitas permintaan (σ)'],['S','Biaya pesan (S)'],['H','Biaya simpan (H)'],['L','Lead time (L)']];
+function sensSku(s,m,z){const v=s.dv,set=DB.settings,mD=m.D||1,D=v.D*mD,sdd=v.sdd*mD*(m.sd||1),S=set.S*(m.S||1),H=v.H*(m.H||1),L=v.L*(m.L||1),zz=z||v.z;
+  const eoq=eoqF(D,S,H),ss=ssF(zz,sdd,L),rop=ropF(D/365,L,ss),cyc=tcF(D,S,H,eoq);
+  return{eoq,ss,rop,cyc,cost:cyc+ss*H,ssVal:ss*s.price,cycVal:eoq/2*s.price}}
+function sensPortfolio(m,z){const r={cost:0,ssVal:0,cycVal:0};DB.skus.forEach(s=>{const x=sensSku(s,m||{},z);r.cost+=x.cost;r.ssVal+=x.ssVal;r.cycVal+=x.cycVal});return r}
+function sensTornado(pct){const base=sensPortfolio({}),SL=[90,95,97.5,99,99.5],i=SL.indexOf(DB.settings.sl),lab=k=>String(k).replace('.',',')+'%';
+  const rows=SENS_PARAMS.map(([k,l])=>({k,l,lo:sensPortfolio({[k]:1-pct}),hi:sensPortfolio({[k]:1+pct}),lol:'−'+Math.round(pct*100)+'%',hil:'+'+Math.round(pct*100)+'%'}));
+  if(i>=0)rows.push({k:'sl',l:'Service level (satu tingkat)',lo:i>0?sensPortfolio({},Z_TABLE[SL[i-1]]):base,hi:i<SL.length-1?sensPortfolio({},Z_TABLE[SL[i+1]]):base,lol:i>0?lab(SL[i-1]):'—',hil:i<SL.length-1?lab(SL[i+1]):'—'});
+  rows.sort((a,b)=>Math.abs(b.hi.cost-b.lo.cost)-Math.abs(a.hi.cost-a.lo.cost));return{base,rows}}
+
+/* ================= Persistensi ================= */
+let _st=null;
+function saveNow(){try{localStorage.setItem(KEY,JSON.stringify(DB,(k,v)=>k==='dv'?undefined:v))}catch(e){STORAGE_OK=false}}
+function save(){clearTimeout(_st);_st=setTimeout(saveNow,150)}
+function loadDb(){try{const raw=localStorage.getItem(KEY);if(raw){const d=JSON.parse(raw);if(d&&d.v===VERSION&&d.skus&&d.locs){DB=d;reindex();recompute();return DB}}}catch(e){}
+  seedDb();return DB}
+function resetAll(){try{localStorage.removeItem(KEY)}catch(e){}seedDb()}
+if(typeof window!=='undefined')window.__wms={eoqF,ssF,ropF,classifyABC,classifyXYZ,Z_TABLE,tripLen,G,get DB(){return DB}};
+/* ================= UI ================= */
+const IC={
+dashboard:'<rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>',
+package:'<path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>',
+inbound:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/>',
+truck:'<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+chart:'<line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/>',
+map:'<path d="M14.1 5.55a2 2 0 0 0 1.79 0l3.66-1.83A1 1 0 0 1 21 4.62v12.76a1 1 0 0 1-.55.9l-4.55 2.28a2 2 0 0 1-1.79 0l-4.21-2.1a2 2 0 0 0-1.79 0l-3.66 1.83A1 1 0 0 1 3 19.38V6.62a1 1 0 0 1 .55-.9l4.55-2.28a2 2 0 0 1 1.79 0z"/><path d="M15 5.76v15"/><path d="M9 3.24v15"/>',
+file:'<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+search:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>',
+moon:'<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+settings:'<line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/><circle cx="9" cy="6" r="2" fill="currentColor"/><circle cx="15" cy="12" r="2" fill="currentColor"/><circle cx="8" cy="18" r="2" fill="currentColor"/>',
+panel:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/>',
+x:'<path d="M18 6 6 18M6 6l12 12"/>',
+check:'<path d="M20 6 9 17l-5-5"/>',
+checkc:'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+alert:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/>',
+octagon:'<path d="M7.86 2h8.28L22 7.86v8.28L16.14 22H7.86L2 16.14V7.86Z"/><path d="M12 8v4M12 16h.01"/>',
+info:'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',
+up:'<path d="m5 12 7-7 7 7M12 19V5"/>',down:'<path d="M12 5v14M19 12l-7 7-7-7"/>',
+left:'<path d="m15 18-6-6 6-6"/>',right:'<path d="m9 18 6-6-6-6"/>',
+download:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/>',
+printer:'<path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>',
+refresh:'<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+route:'<circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/>',
+tablet:'<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M12 18h.01"/>',
+box:'<path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/>'};
+const ic=(n,s=18)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${IC[n]||''}</svg>`;
+const BI={success:'checkc',warning:'alert',danger:'octagon',info:'info',neutral:''};
+const badge=(k,t)=>`<span class="badge b-${k}">${BI[k]?ic(BI[k],14):''}${esc(t)}</span>`;
+const STB={Kritis:'danger','Menunggu PO':'info',Rendah:'warning',Normal:'success',Berlebih:'neutral'};
+const stBadge=st=>badge(STB[st]||'neutral',st);
+const POB={Terbuka:'info',Sebagian:'warning',Terlambat:'danger',Selesai:'success'};
+const SOB={Baru:'info','Dalam wave':'warning','Siap kirim':'info',Dikirim:'success'};
+const clsB=s=>`<span class="cls cls-${s.dv.abc}" title="Kelas ${s.dv.abc}${s.dv.xyz}">${s.dv.abc}·${s.dv.xyz}</span>`;
+
+const UI={view:'dashboard',loading:false,kpiSel:'acc',
+  inv:{q:'',cat:'',abc:'',st:'',sort:'st',dir:1,page:1,sel:new Set()},drawer:null,
+  in:{poSel:'PO-26-0412',poF:'',poQ:'',edits:{},busy:false,tried:false},
+  put:{sel:null,busy:false,hl:null},pick:{sel:new Set(),picker:false},
+  an:{cell:null,sort:'val',dir:-1,page:1,row:null,ms:0},
+  map:{mode:'util',sel:null,hl:null,cur:null},slot:{limit:50},pendingDrawer:null,search:{q:''},modal:null,notif:false,lastFocus:null};
+let OO=new Map(),LT=null;
+const NODELAY=/nodelay/.test(location.search);
+const VIEWS={};
+const TITLES={dashboard:'Dashboard',inventori:'Inventori',penerimaan:'Penerimaan',putaway:'Putaway',picking:'Picking & Pengiriman',analitik:'Analitik TI',slotting:'Simulasi Slotting',sensitivitas:'Sensitivitas',verifikasi:'Verifikasi Rumus',peta:'Peta Gudang',laporan:'Laporan'};
+
+/* ---------- komponen kecil ---------- */
+function toast(msg,kind='ok'){const el=document.createElement('div');el.className='toast'+(kind==='err'?' err':kind==='info'?' info':'');
+  el.innerHTML=`${ic(kind==='err'?'octagon':kind==='info'?'info':'checkc',20)}<div class="sm" style="flex:1">${msg}</div><button class="btn ghost icon sm" style="width:32px;min-height:32px" aria-label="Tutup notifikasi" data-act="toastx">${ic('x',16)}</button>`;
+  const tc=$('#toasts');tc.appendChild(el);while(tc.children.length>2)tc.firstChild.remove();setTimeout(()=>el.remove(),5000)}
+const pager=(total,page,per,act)=>{const pages=Math.max(1,Math.ceil(total/per));return`<div class="pager"><span class="sm muted">${total?`${(page-1)*per+1}–${Math.min(total,page*per)} dari ${fmt(total)}`:'0 data'}</span><div class="row"><button class="btn sm" data-act="${act}" data-p="${page-1}" ${page<=1?'disabled':''} aria-label="Halaman sebelumnya">${ic('left',16)}Sebelumnya</button><span class="sm">Hal. ${page}/${pages}</span><button class="btn sm" data-act="${act}" data-p="${page+1}" ${page>=pages?'disabled':''} aria-label="Halaman berikutnya">Berikutnya${ic('right',16)}</button></div></div>`};
+const th=(t,k,label,cls='')=>{const s=UI[t],on=s.sort===k;return`<th class="${cls}" aria-sort="${on?(s.dir>0?'ascending':'descending'):'none'}"><button class="sortb" data-act="sort" data-t="${t}" data-k="${k}">${label}${on?ic(s.dir>0?'up':'down',12):''}</button></th>`};
+const head=(title,sub,actions='')=>`<div class="page-head"><div><h1>${title}</h1><p class="sub">${sub}</p></div><div class="actions">${actions}</div></div>`;
+const empty=(t,d,btn='')=>`<div class="empty">${ic('box',32)}<h3>${t}</h3><p class="sm">${d}</p>${btn?`<div style="margin-top:12px">${btn}</div>`:''}</div>`;
+const tabs=(cur,list)=>`<div class="tabs" role="tablist">${list.map(t=>`<button class="tab" role="tab" aria-selected="${t.id===cur}" data-act="go" data-v="${t.id}">${t.l}${t.n?`<span class="cnt">${t.n}</span>`:''}</button>`).join('')}</div>`;
+const spark=v=>{const lo=Math.min(...v),hi=Math.max(...v),W=96,H=28,X=i=>2+(W-4)*i/(v.length-1),Y=x=>2+(H-4)*(1-(x-lo)/((hi-lo)||1));return`<svg class="spark" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" aria-hidden="true"><polyline points="${v.map((x,i)=>X(i)+','+Y(x)).join(' ')}"/><circle cx="${X(v.length-1)}" cy="${Y(v[v.length-1])}" r="3"/></svg>`};
+const dataCSV=(name,rows)=>{const csv='﻿'+rows.map(r=>r.map(c=>{c=String(c==null?'':c);return/[",;\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c}).join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)};
+
+/* ---------- grafik ---------- */
+const CH={};
+function lineChart(id,labels,series,fv,label){
+  const W=640,H=240,m={l:56,r:14,t:12,b:28},n=labels.length,all=series.flatMap(s=>s.vals);
+  let lo=Math.min(...all),hi=Math.max(...all);const pd=(hi-lo)*.2||1;lo-=pd;hi+=pd;
+  const X=i=>m.l+(W-m.l-m.r)*i/(n-1),Y=v=>m.t+(H-m.t-m.b)*(1-(v-lo)/(hi-lo));let g='';
+  for(let k=0;k<=4;k++){const v=lo+(hi-lo)*k/4,y=Y(v);g+=`<line class="grid" x1="${m.l}" x2="${W-m.r}" y1="${y}" y2="${y}"/><text x="${m.l-8}" y="${y+4}" text-anchor="end">${esc(fv(v))}</text>`}
+  labels.forEach((lb,i)=>{if((i%7===0&&i<n-4)||i===n-1)g+=`<text x="${X(i)}" y="${H-8}" text-anchor="${i===n-1?'end':'middle'}">${esc(lb)}</text>`});
+  series.forEach(s=>{g+=`<polyline class="${s.type==='tg'?'tg':'ln'}" points="${s.vals.map((v,i)=>X(i)+','+Y(v)).join(' ')}"/>`;if(s.type==='act')g+=s.vals.map((v,i)=>`<circle class="dot" cx="${X(i)}" cy="${Y(v)}" r="3"/>`).join('')});
+  CH[id]={labels,series,fv,W,xs:labels.map((_,i)=>X(i))};
+  const a=series[0].vals;
+  return`<div class="chart-wrap" data-cw="${id}"><svg class="chart" viewBox="0 0 ${W} ${H}" role="img" tabindex="0" data-chart="${id}" aria-label="${esc(label)}. Terendah ${esc(fv(Math.min(...a)))}, tertinggi ${esc(fv(Math.max(...a)))}, terakhir ${esc(fv(a[a.length-1]))}. Gunakan panah kiri/kanan untuk membaca nilai per hari.">${g}<line class="cursor" x1="0" x2="0" y1="${m.t}" y2="${H-m.b}" visibility="hidden"/></svg><div class="tip" hidden></div></div>`}
+function showTip(id,idx){const c=CH[id],w=document.querySelector(`[data-cw="${id}"]`);if(!c||!w)return;idx=clamp(idx,0,c.labels.length-1);const tip=$('.tip',w),cur=$('.cursor',w),x=c.xs[idx];
+  cur.setAttribute('x1',x);cur.setAttribute('x2',x);cur.setAttribute('visibility','visible');
+  tip.innerHTML=`<b>${esc(c.labels[idx])}</b><br>`+c.series.map(s=>`${esc(s.name)}: ${esc(c.fv(s.vals[idx]))}`).join('<br>');tip.hidden=false;tip.style.left=clamp(x/c.W*100,12,88)+'%';c.idx=idx}
+function hideTip(id){const w=document.querySelector(`[data-cw="${id}"]`);if(!w)return;$('.tip',w).hidden=true;$('.cursor',w).setAttribute('visibility','hidden')}
+function barChart(labels,vals,label){const W=560,H=190,m={l:36,r:8,t:20,b:26},mx=Math.max(...vals,1),bw=(W-m.l-m.r)/vals.length;let g='';
+  for(let k=0;k<=2;k++){const v=mx*k/2,y=m.t+(H-m.t-m.b)*(1-k/2);g+=`<line class="grid" x1="${m.l}" x2="${W-m.r}" y1="${y}" y2="${y}"/><text x="${m.l-6}" y="${y+4}" text-anchor="end">${fmt(v)}</text>`}
+  vals.forEach((v,i)=>{const h=(H-m.t-m.b)*v/mx,x=m.l+i*bw+bw*.15;g+=`<rect class="bar-a" x="${x}" y="${H-m.b-h}" width="${bw*.7}" height="${h}" rx="2"><title>${esc(labels[i])}: ${fmt(v)}</title></rect><text x="${x+bw*.35}" y="${H-m.b-h-4}" text-anchor="middle">${fmt(v)}</text><text x="${x+bw*.35}" y="${H-8}" text-anchor="middle">${esc(labels[i])}</text>`});
+  return`<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(label)}: ${vals.map((v,i)=>labels[i]+' '+v).join(', ')}">${g}</svg>`}
+const MONTHS=['Nov','Des','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt'];
+
+/* ---------- KPI ---------- */
+const KM=[
+ {k:'acc',l:'Akurasi stok',t:98,dir:'up',f:v=>f1(v)+'%',tl:'≥ 98%',d:'Lokasi sesuai catatan ÷ lokasi dihitung (cycle count, kumulatif)'},
+ {k:'turn',l:'Inventory turnover',t:5,dir:'up',f:v=>f1(v)+'×',tl:'5× per tahun',d:'HPP tahunan ÷ nilai stok rata-rata · target demo 5× untuk suku cadang lambat (PRD awal 8×)'},
+ {k:'util',l:'Utilisasi ruang',t:[75,85],dir:'range',f:v=>f1(v)+'%',tl:'75–85%',d:'Lokasi terisi ÷ lokasi tersedia'},
+ {k:'oct',l:'Order cycle time',t:24,dir:'down',f:v=>f1(v)+' jam',tl:'< 24 jam',d:'Pesanan masuk hingga dikirim'},
+ {k:'d2s',l:'Dock-to-stock',t:4,dir:'down',f:v=>f1(v)+' jam',tl:'< 4 jam',d:'Bongkar hingga siap diambil'},
+ {k:'por',l:'Perfect order rate',t:95,dir:'up',f:v=>f1(v)+'%',tl:'≥ 95%',d:'Tepat jumlah, tepat waktu, tanpa rusak'},
+ {k:'pph',l:'Picks per jam per orang',t:60,dir:'up',f:v=>f1(v)+' baris',tl:'60 baris/jam',d:'Baris picking ÷ jam kerja (waktu jalan + ambil + persiapan per trip)'}];
+function kpiAll(){const now=kpiNow(),o={};
+  KM.forEach(m=>{const val=now[m.k],ser=DB.kpi[m.k].slice();ser[ser.length-1]=+val.toFixed(2);const t=m.t;let st;
+    if(m.dir==='up')st=val>=t?'ok':val>=t*.95?'warn':'bad';else if(m.dir==='down')st=val<=t?'ok':val<=t*1.1?'warn':'bad';else st=val>=t[0]&&val<=t[1]?'ok':(val>=t[0]-5&&val<=t[1]+5)?'warn':'bad';
+    const d=val-ser[0],good=m.dir==='range'?null:(m.dir==='up'?d>=0:d<=0);
+    o[m.k]={...m,val,ser,st,d,good,stT:{ok:'Sesuai target',warn:'Mendekati target',bad:'Di luar target'}[st]}});return o}
+const stB=st=>badge({ok:'success',warn:'warning',bad:'danger'}[st],{ok:'Sesuai target',warn:'Mendekati',bad:'Di luar target'}[st]);
+const dayLabels=()=>Array.from({length:30},(_,i)=>dFmt(addDays(TODAY,i-29)));
+
+/* ================= VIEW: Dashboard ================= */
+VIEWS.dashboard=()=>{
+  const K=kpiAll(),ins=invInsight(),sel=K[UI.kpiSel],crit=criticalSkus(),late=DB.pos.filter(p=>poStatus(p)==='Terlambat'),hot=DB.locs.filter(l=>l.skuId&&l.units/l.cap>=.95);
+  const cards=['acc','turn','util','oct'].map(k=>{const x=K[k],cl=x.good===null?'neu':x.good?'good':'badc';
+    return`<article class="card kpi" aria-label="${esc(x.l)}"><div class="kpi-top"><span class="kpi-l">${x.l}</span>${stB(x.st)}</div><div class="kpi-v mono">${x.f(x.val)}</div>
+    <div class="kpi-d ${cl}">${ic(x.d>=0?'up':'down',14)}<span>${x.d>=0?'+':'−'}${f1(Math.abs(x.d))} vs 30 hari lalu</span></div>
+    <div class="kpi-f"><span class="xs muted">Target ${x.tl}</span>${spark(x.ser)}</div>${k==='turn'&&x.st!=='ok'?`<button class="linkbtn" data-act="go" data-v="analitik" style="font-size:13px;min-height:44px">Mengapa ${f1(x.val)}×? ${f1(ins.ssShare*100)}% nilai stok adalah safety stock</button>`:''}</article>`}).join('');
+  const tg=Array.isArray(sel.t)?[{name:'Batas bawah',type:'tg',vals:Array(30).fill(sel.t[0])},{name:'Batas atas',type:'tg',vals:Array(30).fill(sel.t[1])}]:[{name:'Target',type:'tg',vals:Array(30).fill(sel.t)}];
+  const chart=lineChart('trend',dayLabels(),[{name:'Aktual',type:'act',vals:sel.ser},...tg],sel.f,`Tren 30 hari ${sel.l}`);
+  const top3=crit.slice(0,3);
+  const alerts=`<div class="stack" role="list">
+   <div class="alert bad" role="listitem">${ic('octagon',22)}<div style="flex:1"><h3>${crit.length} SKU di bawah titik pemesanan ulang (ROP)</h3><p class="sm muted">${crit.filter(s=>s.dv.abc==='A').length} di antaranya kelas A. Tiga teratas menurut nilai pemakaian:</p>
+     <ul>${top3.map(s=>`<li><span><span class="mono">${esc(s.code)}</span> · stok ${fmt(onHand(s))} / ROP ${fmt(s.dv.rop)}</span><button class="btn sm primary" data-act="approveOne" data-sku="${s.id}">Setujui PO</button></li>`).join('')||'<li class="muted">Semua SKU aman.</li>'}</ul>
+     <div style="margin-top:8px"><button class="btn sm" data-act="go" data-v="analitik">Lihat semua rekomendasi ${ic('right',14)}</button></div></div></div>
+   <div class="alert warn" role="listitem">${ic('alert',22)}<div style="flex:1"><h3>${late.length} PO terlambat dari pemasok</h3><ul>${late.slice(0,2).map(p=>`<li><span><span class="mono">${p.id}</span> · ${esc(IDX.sup.get(p.supplierId).name)}</span><span class="xs muted">ETA ${dFmt(p.eta)}</span></li>`).join('')}</ul>
+     <div style="margin-top:8px"><button class="btn sm" data-act="lateFilter">Tinjau PO terlambat ${ic('right',14)}</button></div></div></div>
+   <div class="alert warn" role="listitem">${ic('alert',22)}<div style="flex:1"><h3>${hot.length} rak melebihi 95% utilisasi</h3><p class="sm muted">${hot.slice(0,3).map(l=>l.id).join(', ')}${hot.length>3?'…':''}</p><div style="margin-top:8px"><button class="btn sm" data-act="toMap" data-loc="${hot[0]?hot[0].id:''}">Lihat di peta ${ic('right',14)}</button></div></div></div>
+   <div class="alert info" role="listitem">${ic('info',22)}<div style="flex:1"><h3>${DB.tasks.length} tugas putaway menunggu</h3><div style="margin-top:8px"><button class="btn sm" data-act="go" data-v="putaway">Kerjakan putaway ${ic('right',14)}</button></div></div></div></div>`;
+  const rows=DB.orders.slice().sort((a,b)=>b.id<a.id?-1:1).slice(0,8).map(o=>`<tr><td class="mono">${o.id}</td><td>${esc(o.customer)}</td><td class="num">${o.lines.length}</td><td>${badge(SOB[o.status],o.status)}</td></tr>`).join('');
+  const score=KM.map(m=>{const x=K[m.k];return`<tr><td>${m.l}<div class="xs muted">${m.d}</div></td><td class="num mono">${x.f(x.val)}</td><td class="num xs muted">${m.tl}</td><td>${stB(x.st)}</td></tr>`}).join('');
+  return head('Dashboard',`Kinerja gudang dalam sekali pandang · data demo per ${dFmtY(TODAY)}`,`<button class="btn" data-act="go" data-v="laporan">${ic('file',16)}Buka laporan</button>`)+welcomeHtml()+
+   `<section class="grid-4" aria-label="Kartu KPI">${cards}</section>
+   <div class="grid-2"><section class="card"><div class="card-h"><h2>Tren 30 hari</h2><div class="field"><label for="kpiSel" class="xs muted">Metrik</label><select id="kpiSel" class="select" data-bind="kpiSel">${KM.map(m=>`<option value="${m.k}" ${m.k===UI.kpiSel?'selected':''}>${m.l}</option>`).join('')}</select></div></div>
+     <div class="legend"><span><i class="sw"></i>Aktual (garis solid, titik)</span><span><i class="sw dash"></i>Target (garis putus-putus)</span></div>${chart}</section>
+     <section class="card"><div class="card-h"><h2>Peringatan</h2></div>${alerts}</section></div>
+   <div class="grid-2"><section class="card"><div class="card-h"><h2>Scorecard 7 KPI gudang</h2></div><table class="tbl"><thead><tr><th>KPI</th><th class="num">Nilai</th><th class="num">Target</th><th>Status</th></tr></thead><tbody>${score}</tbody></table></section>
+     <section class="card"><div class="card-h"><h2>Pesanan terbaru</h2><button class="btn sm" data-act="go" data-v="picking">Ke picking</button></div><table class="tbl"><thead><tr><th>Pesanan</th><th>Pelanggan</th><th class="num">Baris</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></section></div>`};
+
+/* ================= VIEW: Inventori ================= */
+function invRows(){const f=UI.inv,q=f.q.trim().toLowerCase();
+  let r=DB.skus.map(s=>({s,h:onHand(s),st:stockStatus(s,OO),o:OO.get(s.id)||0}));
+  if(q)r=r.filter(x=>x.s.code.toLowerCase().includes(q)||x.s.name.toLowerCase().includes(q));
+  if(f.cat)r=r.filter(x=>x.s.cat===f.cat);if(f.abc)r=r.filter(x=>x.s.dv.abc===f.abc);if(f.st)r=r.filter(x=>x.st===f.st);
+  const rk={Kritis:0,'Menunggu PO':1,Rendah:2,Normal:3,Berlebih:4},g={code:x=>x.s.code,name:x=>x.s.name,cat:x=>x.s.cat,abc:x=>x.s.dv.abc+x.s.dv.xyz,h:x=>x.h,rop:x=>x.s.dv.rop,loc:x=>x.s.locIds[0],age:x=>x.s.ageD,st:x=>rk[x.st]*1e6-x.s.dv.val/1e3}[f.sort]||(x=>x.s.code);
+  r.sort((a,b)=>{const A=g(a),B=g(b);return(A<B?-1:A>B?1:0)*f.dir});return r}
+const ageB=d=>d<60?badge('success',`${d} hari`):d<120?badge('warning',`${d} hari`):badge('danger',`${d} hari · prioritas keluar`);
+VIEWS.inventori=()=>{const f=UI.inv,rows=invRows(),per=15,pages=Math.max(1,Math.ceil(rows.length/per));if(f.page>pages)f.page=pages;const pg=rows.slice((f.page-1)*per,f.page*per);
+  const allSel=pg.length&&pg.every(x=>f.sel.has(x.s.id));
+  const cats=[...new Set(DB.skus.map(s=>s.cat))];
+  const body=pg.map(x=>{const s=x.s;return`<tr class="clk ${f.sel.has(s.id)?'sel':''}" data-act="openSku" data-id="${s.id}"><td><input type="checkbox" class="chk" data-bind="inv.pick" data-id="${s.id}" ${f.sel.has(s.id)?'checked':''} aria-label="Pilih ${esc(s.code)}"></td><td class="mono"><button class="linkbtn" data-act="openSku" data-id="${s.id}" aria-label="Buka detail ${esc(s.code)}">${esc(s.code)}</button></td><td>${esc(s.name)}</td><td class="hide-md">${esc(s.cat)}</td><td>${clsB(s)}</td><td class="num mono">${fmt(x.h)}</td><td class="num mono hide-md">${fmt(s.dv.rop)}</td><td class="mono hide-md">${s.locIds[0]}</td><td class="hide-md">${ageB(s.ageD)}</td><td>${stBadge(x.st)}</td></tr>`}).join('');
+  return head('Inventori',`${fmt(DB.skus.length)} SKU · ${fmt(DB.locs.filter(l=>l.skuId).length)} lokasi terisi`,`<button class="btn" data-act="openCC">${ic('checkc',16)}Cycle count</button><button class="btn" data-act="exportInv">${ic('download',16)}Ekspor CSV</button>`)+
+  `<div class="toolbar"><div class="field"><label for="invQ">Cari SKU</label><input id="invQ" class="input" type="search" style="width:240px" placeholder="mis. BRG-6204" value="${esc(f.q)}" data-bind="inv.q"></div>
+   <div class="field"><label for="invCat">Kategori</label><select id="invCat" class="select" data-bind="inv.cat"><option value="">Semua</option>${cats.map(c=>`<option ${f.cat===c?'selected':''}>${c}</option>`).join('')}</select></div>
+   <div class="field"><label for="invAbc">Kelas ABC</label><select id="invAbc" class="select" data-bind="inv.abc"><option value="">Semua</option>${['A','B','C'].map(c=>`<option ${f.abc===c?'selected':''}>${c}</option>`).join('')}</select></div>
+   <div class="field"><label for="invSt">Status stok</label><select id="invSt" class="select" data-bind="inv.st"><option value="">Semua</option>${['Kritis','Menunggu PO','Rendah','Normal','Berlebih'].map(c=>`<option ${f.st===c?'selected':''}>${c}</option>`).join('')}</select></div>
+   ${f.sel.size?`<div class="row" style="margin-left:auto"><span class="sm">${f.sel.size} dipilih</span><button class="btn sm" data-act="exportSel">${ic('download',14)}Ekspor terpilih</button><button class="btn sm ghost" data-act="selClear">Batal pilih</button></div>`:''}</div>
+  <section class="card" style="padding:0">${pg.length?`<table class="tbl"><thead><tr><th style="width:44px"><input type="checkbox" class="chk" data-bind="inv.all" ${allSel?'checked':''} aria-label="Pilih semua di halaman ini"></th>${th('inv','code','Kode SKU')}${th('inv','name','Nama')}${th('inv','cat','Kategori','hide-md')}${th('inv','abc','Kelas')}${th('inv','h','Stok','num')}${th('inv','rop','ROP','num hide-md')}${th('inv','loc','Lokasi','hide-md')}${th('inv','age','Umur stok (FEFO)','hide-md')}${th('inv','st','Status')}</tr></thead><tbody>${body}</tbody></table>`:empty('Tidak ada SKU yang cocok','Ubah kata kunci atau hapus filter.',`<button class="btn" data-act="invClear">Hapus filter</button>`)}
+  <div style="padding:0 16px 16px">${pager(rows.length,f.page,per,'invPage')}</div></section>`};
+function skuHistory(s){
+  const out=DB.moves.filter(m=>m.skuId===s.id).map(m=>({d:m.d,type:m.type,qty:m.type==='Keluar'?-Math.abs(m.qty):m.qty,ref:m.ref,live:true}));
+  const types=['Masuk','Keluar','Keluar','Putaway','Keluar','Masuk','Keluar','Koreksi'];
+  types.forEach((t,i)=>{const h=hash01(s.id+i),q=Math.max(1,Math.round(t==='Masuk'||t==='Putaway'?s.dv.eoq*(.5+h*.6):s.lq*(.6+h*1.2)));
+    out.push({d:addDays(TODAY,-(2+i*4+Math.floor(h*3))),type:t,qty:t==='Keluar'?-q:t==='Koreksi'?(h>.5?1:-1):q,ref:t==='Masuk'?'PO-26-'+pad(380+Math.floor(h*40),4):t==='Keluar'?'SO-26-'+(1201+Math.floor(h*60)):t==='Putaway'?s.locIds[0]:'Cycle count'})});
+  return out.slice(0,12)}
+function skuDrawer(s){const v=s.dv,sup=IDX.sup.get(s.supplierId),h=onHand(s),o=OO.get(s.id)||0;
+  return`<div class="drawer-h"><div><div class="mono" style="font-size:18px;font-weight:600">${esc(s.code)}</div><div class="sm muted">${esc(s.name)}</div><div class="row" style="margin-top:8px">${clsB(s)}${stBadge(stockStatus(s,OO))}</div></div><button class="btn ghost icon" data-act="closeDrawer" aria-label="Tutup detail">${ic('x')}</button></div>
+  <div class="drawer-b"><dl class="dl"><dt>Kategori</dt><dd>${esc(s.cat)} · ${s.uom}</dd><dt>Pemasok</dt><dd>${esc(sup.name)} · lead time ${v.L} hari</dd><dt>Harga satuan</dt><dd class="mono">${rp(s.price)}</dd>
+   <dt>Stok</dt><dd class="mono">${fmt(h)} ${s.uom}${s.staging?` (${fmt(s.staging)} menunggu putaway)`:''}</dd><dt>Dalam pesanan (PO)</dt><dd class="mono">${fmt(o)}</dd>
+   <dt>Lokasi</dt><dd class="mono">${skuLocs(s).map(l=>`${l.id} (${Math.round(l.units/l.cap*100)}%)`).join(', ')}</dd><dt>Umur stok</dt><dd>${ageB(s.ageD)}</dd></dl>
+   <div><h3 style="margin-bottom:8px">Parameter persediaan (service level ${DB.settings.sl}%)</h3><dl class="dl mono"><dt>Permintaan/tahun (D)</dt><dd>${fmt(v.D)}</dd><dt>CV permintaan</dt><dd>${f2(v.cv)} → ${v.xyz}</dd><dt>EOQ</dt><dd>${fmt(v.eoq)}</dd><dt>Safety stock</dt><dd>${fmt(v.ss)}</dd><dt>ROP</dt><dd>${fmt(v.rop)}</dd></dl></div>
+   <div><h3 style="margin-bottom:8px">Permintaan 12 bulan terakhir</h3>${barChart(MONTHS,s.monthly,'Permintaan bulanan '+s.code)}</div>
+   <div><h3 style="margin-bottom:8px">Riwayat pergerakan</h3><table class="tbl"><thead><tr><th>Tanggal</th><th>Jenis</th><th class="num">Jumlah</th><th>Referensi</th></tr></thead><tbody>${skuHistory(s).map(m=>`<tr><td>${dFmt(m.d)}</td><td>${m.type}${m.live?' '+badge('info','baru'):''}</td><td class="num mono">${m.qty>0?'+':''}${fmt(m.qty)}</td><td class="mono xs">${esc(m.ref)}</td></tr>`).join('')}</tbody></table></div></div>`}
+
+/* ================= VIEW: Inbound ================= */
+const inTabs=cur=>tabs(cur,[{id:'penerimaan',l:'Penerimaan'},{id:'putaway',l:'Putaway',n:DB.tasks.length||''}]);
+function poList(){const f=UI.in,q=f.poQ.trim().toLowerCase();
+  return DB.pos.filter(p=>(!f.poF||poStatus(p)===f.poF)&&(!q||p.id.toLowerCase().includes(q)||IDX.sup.get(p.supplierId).name.toLowerCase().includes(q))).sort((a,b)=>{const r={Terlambat:0,Sebagian:1,Terbuka:2,Selesai:3},d=r[poStatus(a)]-r[poStatus(b)];return d||(a.eta<b.eta?-1:1)})}
+function validateIn(po){const errs={};po.lines.forEach((l,i)=>{const e=UI.in.edits[po.id+':'+i]||{},q=e.q===undefined||e.q===''?String(poOut(l)):e.q;
+  if(!/^\d+$/.test(String(q).trim()))errs['q'+i]='Masukkan bilangan bulat ≥ 0';
+  else if(+q!==poOut(l)&&!e.r)errs['r'+i]='Pilih alasan selisih'});return errs}
+VIEWS.penerimaan=()=>{const f=UI.in,list=poList();
+  if(!DB.pos.find(p=>p.id===f.poSel)){const o=DB.pos.find(p=>poStatus(p)!=='Selesai');f.poSel=o?o.id:DB.pos[0].id}
+  const po=DB.pos.find(p=>p.id===f.poSel),st=poStatus(po),sup=IDX.sup.get(po.supplierId),errs=f.tried?validateIn(po):{};
+  const rows=list.map(p=>{const s=poStatus(p);return`<tr class="clk ${p.id===f.poSel?'sel':''}" data-act="poSel" data-id="${p.id}" tabindex="0" role="button" aria-label="Pilih ${p.id}"><td class="mono">${p.id}</td><td class="td-trunc" style="max-width:150px">${esc(IDX.sup.get(p.supplierId).name)}</td><td>${dFmt(p.eta)}</td><td>${badge(POB[s],s)}</td></tr>`}).join('');
+  const lines=po.lines.map((l,i)=>{const s=IDX.sku.get(l.skuId),out=poOut(l),e=f.in||{},ed=f.edits[po.id+':'+i]||{},q=ed.q===undefined?String(out):ed.q,ro=st==='Selesai',diff=!ro&&/^\d+$/.test(q)&&+q!==out;
+    return`<tr><td><span class="mono">${esc(s.code)}</span><div class="xs muted">${esc(s.name)}</div></td><td class="num mono">${fmt(l.qty)}</td><td class="num mono">${fmt(l.recv)}</td><td class="num mono">${fmt(out)}</td>
+    <td>${ro?'<span class="muted">—</span>':`<label class="sr" for="rq${i}">Jumlah diterima ${esc(s.code)}</label><input id="rq${i}" class="input num mono ${errs['q'+i]?'err':''}" style="width:96px" inputmode="numeric" value="${esc(q)}" data-bind="in.q" data-i="${i}" ${errs['q'+i]?`aria-invalid="true" aria-describedby="eq${i}"`:''}>${errs['q'+i]?`<div class="err-t" id="eq${i}">${ic('octagon',12)}${errs['q'+i]}</div>`:''}`}</td>
+    <td>${ro?'':diff?`<label class="sr" for="rr${i}">Alasan selisih ${esc(s.code)}</label><select id="rr${i}" class="select ${errs['r'+i]?'err':''}" data-bind="in.r" data-i="${i}"><option value="">Pilih alasan…</option>${['Kurang kirim','Rusak','Lebih kirim','Salah barang'].map(r=>`<option ${ed.r===r?'selected':''}>${r}</option>`).join('')}</select>${errs['r'+i]?`<div class="err-t">${ic('octagon',12)}${errs['r'+i]}</div>`:''}`:'<span class="xs muted">Sesuai dokumen</span>'}</td></tr>`}).join('');
+  const hist=DB.variances.filter(v=>v.poId===po.id);
+  return head('Inbound','Terima barang per PO, cek jumlah terhadap dokumen, catat selisih')+inTabs('penerimaan')+
+  `<div class="toolbar"><div class="field"><label for="poQ">Cari PO / pemasok</label><input id="poQ" class="input" type="search" value="${esc(f.poQ)}" data-bind="in.poQ"></div>
+   <div class="field"><label for="poF">Status</label><select id="poF" class="select" data-bind="in.poF"><option value="">Semua</option>${['Terbuka','Sebagian','Terlambat','Selesai'].map(c=>`<option ${f.poF===c?'selected':''}>${c}</option>`).join('')}</select></div></div>
+  <div class="split"><section class="card" style="padding:0">${list.length?`<table class="tbl"><thead><tr><th>PO</th><th>Pemasok</th><th>ETA</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`:empty('Tidak ada PO','Ubah filter pencarian.',`<button class="btn" data-act="poClear">Hapus filter</button>`)}</section>
+  <section class="card"><div class="card-h"><div><h2><span class="mono">${po.id}</span> ${badge(POB[st],st)}</h2><p class="sm muted">${esc(sup.name)} · dibuat ${dFmt(po.date)} · ETA ${dFmt(po.eta)}${st==='Terlambat'?` (terlambat ${diffD(po.eta)} hari)`:''}</p></div>
+   ${st!=='Selesai'?`<button class="btn primary" data-act="receive" ${f.busy?'disabled':''}>${f.busy?'<span class="spin"></span>Memproses…':ic('check',16)+'Konfirmasi penerimaan'}</button>`:badge('success','Sudah diterima penuh')}</div>
+   <table class="tbl"><thead><tr><th>SKU</th><th class="num">Dipesan</th><th class="num">Diterima</th><th class="num">Sisa</th><th>Terima sekarang</th><th>Selisih</th></tr></thead><tbody>${lines}</tbody></table>
+   ${hist.length?`<div style="margin-top:12px"><h3>Selisih tercatat</h3><ul class="sm">${hist.slice(0,4).map(v=>`<li>${esc(IDX.sku.get(v.skuId).code)}: dokumen ${fmt(v.expected)}, diterima ${fmt(v.got)} — ${esc(v.reason||'sesuai')}</li>`).join('')}</ul></div>`:''}
+   <p class="help" style="margin-top:12px">Setelah dikonfirmasi, stok masuk area staging dan sistem membuat tugas putaway otomatis.</p></section></div>`};
+const diffD=iso=>Math.round((new Date(TODAY)-new Date(iso))/864e5);
+
+/* ================= VIEW: Putaway ================= */
+VIEWS.putaway=()=>{const f=UI.put;
+  if(!DB.tasks.find(t=>t.id===f.sel))f.sel=DB.tasks[0]?DB.tasks[0].id:null;
+  const t=DB.tasks.find(x=>x.id===f.sel);
+  const rows=DB.tasks.map(x=>{const s=IDX.sku.get(x.skuId);return`<tr class="clk ${x.id===f.sel?'sel':''}" data-act="putTask" data-id="${x.id}" tabindex="0" role="button"><td class="mono">${x.id}</td><td><span class="mono">${esc(s.code)}</span><div class="xs muted">${esc(s.name)}</div></td><td class="num mono">${fmt(x.qty)}</td><td>${clsB(s)}</td></tr>`}).join('');
+  let right;
+  if(!t)right=empty('Tidak ada tugas putaway','Terima barang dari PO untuk membuat tugas baru.',`<button class="btn primary" data-act="go" data-v="penerimaan">Ke penerimaan</button>`);
+  else{const s=IDX.sku.get(t.skuId),t0=performance.now(),sg=suggestLocations(s,t.qty),ms=performance.now()-t0;
+    right=`<div class="card-h"><div><h2>${esc(s.code)} · ${fmt(t.qty)} ${s.uom}</h2><p class="sm muted">${esc(s.name)} · dari ${t.poId} · ${clsB(s)} ${s.dv.abc==='A'?'prioritas dekat dock':s.dv.abc==='B'?'zona menengah':'zona jauh, sisakan golden zone untuk kelas A'}</p></div><span class="xs muted">Saran dihitung dalam ${f1(ms)} ms</span></div>
+    <div class="stack">${sg.map((c,i)=>{const l=c.l,lv=l.level===2||l.level===3?'setinggi pinggang (golden zone)':l.level===1?'level bawah':'level atas';
+      return`<div class="sug ${i===0?'best':''}"><div class="row" style="justify-content:space-between"><div class="row"><b class="mono" style="font-size:18px">${l.id}</b>${i===0?badge('info','Saran terbaik'):`<span class="xs muted">Alternatif ${i}</span>`}</div><div class="row"><button class="btn sm" data-act="toMap" data-loc="${l.id}">Lihat di peta</button><button class="btn sm primary" data-act="place" data-loc="${l.id}" ${f.busy?'disabled':''}>${f.busy?'<span class="spin"></span>':ic('check',14)}Simpan di sini</button></div></div>
+      <div class="chips"><span class="chip">Kelas ${s.dv.abc} → Zona ${l.zone}</span><span class="chip">Jarak ke dock ${f1(l.dist)} m</span><span class="chip">${lv}</span><span class="chip">${c.cons?`Konsolidasi dengan stok SKU yang sama · sisa ${fmt(c.free)} ${s.uom}`:`Lokasi kosong · kapasitas ${fmt(c.free)} ${s.uom}`}${c.free<t.qty?' (muat sebagian)':''}</span></div></div>`}).join('')}</div>`}
+  return head('Inbound','Saran lokasi simpan otomatis berdasarkan kelas ABC, kapasitas, dan kedekatan ke dock')+inTabs('putaway')+
+  `<div class="split"><section class="card" style="padding:0">${DB.tasks.length?`<table class="tbl"><thead><tr><th>Tugas</th><th>SKU</th><th class="num">Jumlah</th><th>Kelas</th></tr></thead><tbody>${rows}</tbody></table>`:empty('Antrean kosong','Semua barang sudah disimpan.')}</section><section class="card">${right}</section></div>`};
+
+/* ================= VIEW: Picking ================= */
+function routeMap(w,cur){const Wm=G.ZW*3+G.GAP*2,Hm=G.ZH*2+G.GAP,S=8,px=x=>20+(x+6)*S,py=y=>16+y*S,st=w.stops,n=st.length,hasCur=cur!=null,tgt=hasCur&&cur<n?IDX.loc.get(st[cur].locId):null;
+  let g=ZONES.map((z,i)=>{const zc=i%3,zr=Math.floor(i/3),on=tgt&&tgt.zone===z;return`<rect x="${px(zc*(G.ZW+G.GAP))}" y="${py(zr*(G.ZH+G.GAP))}" width="${G.ZW*S}" height="${G.ZH*S}" fill="${on?'var(--primary-soft)':'var(--surface)'}" stroke="${on?'var(--primary)':'var(--border-strong)'}" stroke-width="${on?2:1}" rx="4"/><text x="${px(zc*(G.ZW+G.GAP))+G.ZW*S-6}" y="${py(zr*(G.ZH+G.GAP))+16}" font-size="12" font-weight="700" text-anchor="end" opacity=".8">Zona ${z}</text>`}).join('');
+  const pts=[G.DOCK,...st.map(s=>IDX.loc.get(s.locId)),G.DOCK];
+  for(let k=0;k<pts.length-1;k++){const a=pts[k],b=pts[k+1];let sty;
+    if(!hasCur)sty='stroke="var(--primary)" stroke-width="2" stroke-dasharray="5 3"';
+    else if(k<cur)sty='stroke="#15803D" stroke-width="3"';
+    else if(k===cur)sty='stroke="var(--primary)" stroke-width="5"';
+    else sty='stroke="var(--text-2)" stroke-width="2" stroke-dasharray="5 4" opacity=".75"';
+    g+=`<path d="M${px(a.x)} ${py(a.y)}H${px(b.x)}V${py(b.y)}" fill="none" stroke-linejoin="round" ${sty}/>`}
+  g+=`<rect x="${px(-7)}" y="${py(15)}" width="${4*S}" height="${6*S}" fill="var(--accent)" rx="3"/><text x="${px(-5)}" y="${py(18)+4}" font-size="11" font-weight="700" text-anchor="middle" style="fill:#0F172A">DOCK</text>`;
+  st.forEach((s,k)=>{if(hasCur&&k===cur)return;const l=IDX.loc.get(s.locId),x=px(l.x),y=py(l.y);
+    g+=s.done?`<circle cx="${x}" cy="${y}" r="8" fill="#15803D"/><path d="M${x-4} ${y} l3 3 l5 -6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>`
+      :`<circle cx="${x}" cy="${y}" r="9" fill="var(--primary)"/><text x="${x}" y="${y+4}" font-size="11" font-weight="700" text-anchor="middle" style="fill:#fff">${k+1}</text>`});
+  if(tgt){const x=px(tgt.x),y=py(tgt.y);g+=`<circle class="pulse" cx="${x}" cy="${y}" r="18" fill="none" stroke="var(--accent)" stroke-width="3"/><circle cx="${x}" cy="${y}" r="12" fill="var(--accent)" stroke="var(--text)" stroke-width="2"/><text x="${x}" y="${y+4}" font-size="12" font-weight="700" text-anchor="middle" style="fill:#0F172A">${cur+1}</text><text class="halo" x="${x+24}" y="${y-12}" font-size="13" font-weight="700">${tgt.id}</text>`}
+  if(hasCur){const a=pts[Math.min(cur,pts.length-2)],x=px(a.x),y=py(a.y);g+=`<polygon points="${x},${y-9} ${x-7},${y+6} ${x+7},${y+6}" fill="var(--text)" stroke="var(--surface)" stroke-width="2"/><text class="halo" x="${x-12}" y="${y+4}" font-size="12" font-weight="700" text-anchor="end">Anda di sini</text>`}
+  return`<svg class="map-svg" viewBox="0 0 ${20+(Wm+8)*S} ${24+Hm*S}" role="img" aria-label="Rute picking ${w.id}: ${n} perhentian, ${f1(w.dist)} meter${tgt?`. Tujuan berikutnya ${tgt.id}`:''}">${g}</svg>`}
+VIEWS.picking=()=>{const f=UI.pick,w=DB.wave,news=DB.orders.filter(o=>o.status==='Baru').sort((a,b)=>b.ageH-a.ageH),ready=DB.orders.filter(o=>o.status==='Siap kirim'),waveActive=w&&w.state==='aktif';
+  const oRows=news.map(o=>`<tr class="${f.sel.has(o.id)?'sel':''}"><td><input type="checkbox" class="chk" data-bind="pick.sel" data-id="${o.id}" ${f.sel.has(o.id)?'checked':''} ${waveActive?'disabled':''} aria-label="Pilih ${o.id}"></td><td class="mono">${o.id}</td><td>${esc(o.customer)}</td><td class="num">${o.lines.length}</td><td class="num">${o.ageH} jam</td></tr>`).join('');
+  let wv='';
+  if(w){const done=w.stops.filter(s=>s.done).length,saving=w.naiveDist?(1-w.dist/w.naiveDist)*100:0;
+    wv=`<section class="card" style="margin-bottom:16px"><div class="card-h"><div><h2>Wave ${w.id} ${badge(w.state==='aktif'?'warning':'success',w.state==='aktif'?'Sedang dikerjakan':'Picking selesai')}</h2><p class="sm muted">${w.orderIds.length} pesanan · ${w.lines} baris · ${w.stops.length} perhentian</p></div>
+     <div class="actions">${waveActive?`<button class="btn primary" data-act="openPicker">${ic('tablet',16)}Buka layar picker</button><button class="btn" data-act="pickAll">Simulasikan selesai</button>`:''}</div></div>
+     <div class="grid-3" style="margin-bottom:12px"><div><div class="xs muted">Jarak rute teroptimasi</div><div class="kpi-v mono" style="font-size:22px">${f1(w.dist)} m</div></div><div><div class="xs muted">Jika urut dokumen</div><div class="kpi-v mono" style="font-size:22px">${f1(w.naiveDist)} m</div></div><div><div class="xs muted">Penghematan rute</div><div class="kpi-v mono" style="font-size:22px">${saving>0?'−':''}${f1(Math.abs(saving))}%</div></div></div>
+     <div class="row" style="margin-bottom:12px"><div class="progress" style="flex:1" role="progressbar" aria-valuenow="${done}" aria-valuemin="0" aria-valuemax="${w.stops.length}" aria-label="Progres picking"><i style="width:${done/w.stops.length*100}%"></i></div><span class="sm mono">${done}/${w.stops.length}</span></div>
+     <div class="grid-2" style="margin-bottom:0"><table class="tbl"><thead><tr><th class="num">#</th><th>Lokasi</th><th>SKU</th><th class="num">Qty</th><th>Status</th></tr></thead><tbody>${w.stops.map((s,i)=>`<tr><td class="num mono">${i+1}</td><td class="mono">${s.locId}</td><td><span class="mono">${esc(IDX.sku.get(s.skuId).code)}</span></td><td class="num mono">${s.qty>0?fmt(s.qty):'—'}${s.short?` <span class="err-t">kurang ${s.short}</span>`:''}</td><td>${s.done?(s.qty>0?badge('success','Diambil'):badge('warning','Kurang dicatat')):badge('neutral','Menunggu')}</td></tr>`).join('')}</tbody></table><div>${routeMap(w,w.stops.findIndex(x=>!x.done)<0?w.stops.length:w.stops.findIndex(x=>!x.done))}<p class="help">Rute nearest-neighbor dari dock dan kembali ke dock (jalur dibuat mengikuti jarak Manhattan). Hijau: sudah dilalui, biru tebal: langkah berikutnya, abu putus-putus: sisa rute.</p></div></div></section>`}
+  const rRows=ready.map(o=>`<tr><td class="mono">${o.id}</td><td>${esc(o.customer)}</td><td class="num">${o.lines.length}</td><td>${o.short?badge('warning','Ada kekurangan stok'):badge('success','Lengkap')}</td><td><button class="btn sm primary" data-act="ship" data-id="${o.id}">${ic('truck',14)}Konfirmasi kirim</button></td></tr>`).join('');
+  return head('Picking & Pengiriman','Wave picking, urutan rute terpendek, status pesanan, konfirmasi pengiriman')+wv+
+  `<section class="card" style="margin-bottom:16px"><div class="card-h"><h2>Antrean pesanan baru (${news.length})</h2><div class="actions"><button class="btn" data-act="pickTop" ${waveActive?'disabled':''}>Pilih 5 teratas</button><button class="btn primary" data-act="makeWave" ${waveActive||!f.sel.size?'disabled':''}>${ic('route',16)}Buat wave picking (${f.sel.size})</button></div></div>
+   ${waveActive?'<p class="sm muted" style="margin-bottom:8px">Selesaikan wave aktif sebelum membuat wave baru.</p>':''}
+   ${news.length?`<table class="tbl"><thead><tr><th style="width:44px"><span class="sr">Pilih</span></th><th>Pesanan</th><th>Pelanggan</th><th class="num">Baris</th><th class="num">Usia</th></tr></thead><tbody>${oRows}</tbody></table>`:empty('Tidak ada pesanan baru','Semua pesanan sudah masuk wave atau terkirim.')}</section>
+   <section class="card"><div class="card-h"><h2>Siap kirim (${ready.length})</h2>${ready.length>1?`<button class="btn" data-act="shipAll">Kirim semua</button>`:''}</div>${ready.length?`<table class="tbl"><thead><tr><th>Pesanan</th><th>Pelanggan</th><th class="num">Baris</th><th>Kondisi</th><th>Aksi</th></tr></thead><tbody>${rRows}</tbody></table>`:empty('Belum ada pesanan siap kirim','Pesanan muncul di sini setelah picking wave selesai.')}</section>`};
+function pickerOverlay(){const w=DB.wave;if(!w)return'';const i=w.stops.findIndex(s=>!s.done);
+  if(i<0)return`<div class="picker" role="dialog" aria-modal="true" aria-label="Layar picker"><div style="margin:auto;text-align:center;max-width:520px">${ic('checkc',64)}<h1 style="margin:12px 0">Wave selesai</h1><p class="muted" style="margin-bottom:24px">${w.orderIds.length} pesanan siap dikirim.</p><button class="btn primary" data-act="closePicker" id="pkFocus">Kembali ke daftar</button></div></div>`;
+  const s=w.stops[i],sk=IDX.sku.get(s.skuId),l=IDX.loc.get(s.locId),prev=i?IDX.loc.get(w.stops[i-1].locId):G.DOCK,leg=Math.abs(l.x-prev.x)+Math.abs(l.y-prev.y),left=w.stops.length-i-1;
+  return`<div class="picker" role="dialog" aria-modal="true" aria-label="Layar picker"><div class="row" style="justify-content:space-between"><div><div class="muted">Wave ${w.id} · langkah ${i+1} dari ${w.stops.length}</div><div class="progress" style="width:260px;margin-top:8px"><i style="width:${i/w.stops.length*100}%"></i></div></div><button class="btn" data-act="closePicker" style="min-width:56px">${ic('x',20)}Tutup</button></div>
+   <div class="picker-grid"><div class="pk-info"><div class="muted" style="font-size:18px">Pergi ke lokasi</div><div class="big mono">${l.id}</div><div class="muted" style="font-size:18px;margin-top:4px">Zona ${l.zone} · sisi ${l.id[1]} · bay ${pad(l.c,2)} · level ${l.level}</div>
+   <div class="card" style="margin:16px 0;text-align:left"><div class="mono" style="font-size:22px;font-weight:600">${esc(sk.code)}</div><div style="font-size:18px">${esc(sk.name)}</div><div style="font-size:40px;font-weight:700;margin-top:8px" class="mono">${s.qty>0?`Ambil ${fmt(s.qty)} ${sk.uom}`:'Stok lantai kosong'}</div>${s.short?`<div class="err-t" style="font-size:16px">${ic('octagon',16)}Kurang ${s.short} ${sk.uom}${sk.staging?' (ada stok menunggu putaway)':''} · pesanan ditandai tidak lengkap</div>`:''}<div class="sm muted">Untuk ${s.orders.join(', ')}</div></div></div>
+   <section class="card pk-map"><h2>Peta rute</h2><p class="sm muted" style="margin:4px 0 8px">Dari ${i?prev.id:'DOCK'} ke ${l.id}: <b class="mono">${f1(leg)} m</b> · ${left?`${left} perhentian lagi setelah ini`:'perhentian terakhir, lalu kembali ke dock'}</p>${routeMap(w,i)}
+    <div class="legend" style="margin:8px 0 0"><span><i class="lgd" style="background:var(--text);border-radius:2px;clip-path:polygon(50% 0,100% 100%,0 100%)"></i>Anda di sini</span><span><i class="lgd" style="background:var(--accent);border:2px solid var(--text)"></i>Tujuan sekarang</span><span><i class="lgd" style="background:var(--primary)"></i>Berikutnya (bernomor)</span><span><i class="lgd" style="background:#15803D"></i>Sudah diambil (centang)</span></div></section></div>
+   <div class="sticky-act"><button class="btn primary" data-act="stop" data-i="${i}" id="pkFocus" style="width:100%">${ic('check',22)}${s.qty>0?'Konfirmasi diambil':'Catat kekurangan & lanjut'}</button></div></div>`}
+
+/* ================= VIEW: Analitik ================= */
+const anTabs=cur=>tabs(cur,[{id:'analitik',l:'ABC-XYZ & persediaan'},{id:'sensitivitas',l:'Sensitivitas'},{id:'slotting',l:'Simulasi slotting'},{id:'verifikasi',l:'Verifikasi rumus'}]);
+const STRAT={AX:'Stok ketat, reorder otomatis',AY:'Safety stock moderat, tinjau mingguan',AZ:'Safety stock tinggi, kolaborasi pemasok',BX:'Reorder periodik rutin',BY:'Min–max, tinjau dua mingguan',BZ:'Stok pengaman terbatas, pesan sesuai kebutuhan',CX:'Pesan massal (EOQ besar), kontrol sederhana',CY:'Stok pengaman kecil, tinjau bulanan',CZ:'Pertimbangkan hapus dari katalog'};
+VIEWS.analitik=()=>{const f=UI.an,set=DB.settings,items=DB.skus.map(s=>({s,h:onHand(s),o:OO.get(s.id)||0,st:stockStatus(s,OO)}));
+  const mx={};['A','B','C'].forEach(a=>['X','Y','Z'].forEach(x=>mx[a+x]={n:0,v:0}));const tv=sum(DB.skus.map(s=>s.dv.val));
+  DB.skus.forEach(s=>{const c=mx[s.dv.abc+s.dv.xyz];c.n++;c.v+=s.dv.val});
+  const cell=k=>{const c=mx[k],cl=k[0]==='A'?'i1':k[0]==='B'?'i2':'i3';return`<button class="mx-c ${cl}" data-act="anCell" data-c="${k}" aria-pressed="${f.cell===k}"><span class="mono xs muted">${k}</span><b class="mono">${c.n} SKU</b><span class="xs">${f1(c.v/tv*100)}% nilai</span><span class="st">${STRAT[k]}</span></button>`};
+  let rows=items.slice();if(f.cell)rows=rows.filter(x=>x.s.dv.abc+x.s.dv.xyz===f.cell);
+  const g={code:x=>x.s.code,abc:x=>x.s.dv.abc+x.s.dv.xyz,D:x=>x.s.dv.D,cv:x=>x.s.dv.cv,eoq:x=>x.s.dv.eoq,ss:x=>x.s.dv.ss,rop:x=>x.s.dv.rop,pos:x=>x.h+x.o,val:x=>x.s.dv.val}[f.sort]||(x=>x.s.dv.val);
+  rows.sort((a,b)=>{const A=g(a),B=g(b);return(A<B?-1:A>B?1:0)*f.dir});
+  const per=10,pages=Math.max(1,Math.ceil(rows.length/per));if(f.page>pages)f.page=pages;const pg=rows.slice((f.page-1)*per,f.page*per);
+  if(!f.row||!IDX.sku.get(f.row))f.row=(rows[0]||items[0]).s.id;
+  const sel=IDX.sku.get(f.row),v=sel.dv;
+  const rec=criticalSkus(),ssVal=sum(DB.skus.map(s=>s.dv.ss*s.price));
+  const tbody=pg.map(x=>{const s=x.s,d=s.dv;return`<tr class="clk ${s.id===f.row?'sel':''}" data-act="anRow" data-id="${s.id}" tabindex="0" role="button" aria-label="Rincian ${esc(s.code)}"><td class="mono">${esc(s.code)}</td><td>${clsB(s)}</td><td class="num mono hide-md">${fmt(d.D)}</td><td class="num mono">${f2(d.cv)}</td><td class="num mono">${fmt(d.eoq)}</td><td class="num mono">${fmt(d.ss)}</td><td class="num mono">${fmt(d.rop)}</td><td class="num mono hide-md">${fmt(x.h+x.o)}</td><td>${stBadge(x.st)}</td></tr>`}).join('');
+  const recRows=rec.slice(0,10).map(s=>{const q=recQty(s),sup=IDX.sup.get(s.supplierId);return`<tr><td><span class="mono">${esc(s.code)}</span> ${clsB(s)}</td><td class="hide-md">${esc(sup.name)}</td><td class="num mono">${sup.L} hr</td><td class="num mono">${fmt(onHand(s))} / ${fmt(s.dv.rop)}</td><td class="num mono">${fmt(q)}</td><td class="num mono hide-md">${rpShort(q*s.price)}</td><td><button class="btn sm primary" data-act="approveOne" data-sku="${s.id}">Setujui PO</button></td></tr>`}).join('');
+  const sub=n=>n;
+  return head('Analitik Teknik Industri','Klasifikasi ABC-XYZ, EOQ, safety stock, dan titik pemesanan ulang — dihitung dari 12 bulan data permintaan',verifyChip())+anTabs('analitik')+
+  `<section class="card" style="margin-bottom:16px"><div class="toolbar" style="margin-bottom:0"><fieldset style="border:0;padding:0;margin:0"><legend class="lbl-s" style="padding:0;margin-bottom:4px">Service level</legend><div class="seg" role="radiogroup">${[90,95,97.5,99,99.5].map(sl=>`<label><input type="radio" name="sl" value="${sl}" data-bind="sl" ${set.sl===sl?'checked':''}><span>${String(sl).replace('.',',')}%</span></label>`).join('')}</div></fieldset>
+    <div class="field"><span class="lbl-s">Faktor Z</span><span class="mono" style="height:40px;display:flex;align-items:center">${f2(Z_TABLE[set.sl])}</span></div>
+    <div class="field"><label for="setS">Biaya pesan per PO (S)</label><input id="setS" class="input mono" style="width:140px" inputmode="numeric" value="${set.S}" data-bind="setS" data-on="change"></div>
+    <div class="field"><label for="setH">Biaya simpan (H, % harga/th)</label><input id="setH" class="input mono" style="width:110px" inputmode="numeric" value="${Math.round(set.hr*100)}" data-bind="setH" data-on="change"></div>
+    <div style="margin-left:auto" class="sm muted" role="status">Dihitung ulang ${fmt(DB.skus.length)} SKU dalam <b class="mono">${f1(f.ms)} ms</b></div></div></section>
+  <div class="grid-4"><div class="card kpi"><span class="kpi-l">Nilai safety stock</span><span class="kpi-v mono">${rpShort(ssVal)}</span><span class="xs muted">Σ SS × harga, berubah mengikuti service level</span></div>
+   <div class="card kpi"><span class="kpi-l">SKU di bawah ROP</span><span class="kpi-v mono">${rec.length}</span><span class="xs muted">${rec.filter(s=>s.dv.abc==='A').length} kelas A</span></div>
+   <div class="card kpi"><span class="kpi-l">Kelas A</span><span class="kpi-v mono">${DB.skus.filter(s=>s.dv.abc==='A').length} SKU</span><span class="xs muted">${f1(sum(DB.skus.filter(s=>s.dv.abc==='A').map(s=>s.dv.val))/tv*100)}% nilai pemakaian</span></div>
+   <div class="card kpi"><span class="kpi-l">Kelas Z (volatil)</span><span class="kpi-v mono">${DB.skus.filter(s=>s.dv.xyz==='Z').length} SKU</span><span class="xs muted">CV permintaan &gt; 1,0</span></div></div>
+  <section class="card" style="margin-bottom:16px"><div class="card-h"><h2>Matriks ABC-XYZ</h2>${f.cell?`<button class="btn sm" data-act="anCell" data-c="">Hapus filter sel ${f.cell}</button>`:'<span class="xs muted">Klik sel untuk memfilter tabel di bawah</span>'}</div>
+   <div class="mx"><div></div><div class="mx-h">X · CV &lt; 0,5<br>stabil</div><div class="mx-h">Y · CV 0,5–1,0<br>sedang</div><div class="mx-h">Z · CV &gt; 1,0<br>volatil</div>
+   ${['A','B','C'].map(a=>`<div class="mx-h">${a}</div>${['X','Y','Z'].map(x=>cell(a+x)).join('')}`).join('')}</div></section>
+  ${insightHtml()}
+  <section class="card" style="margin-bottom:16px"><div class="card-h"><h2>Rekomendasi pemesanan ulang</h2>${rec.length?`<button class="btn primary" data-act="approveAll">Setujui semua (${rec.length} SKU)</button>`:''}</div>
+   ${rec.length?`<table class="tbl"><thead><tr><th>SKU</th><th class="hide-md">Pemasok</th><th class="num">Lead time</th><th class="num">Stok / ROP</th><th class="num">Qty</th><th class="num hide-md">Estimasi nilai</th><th>Aksi</th></tr></thead><tbody>${recRows}</tbody></table><p class="help" style="margin-top:8px">Qty = (ROP + EOQ) − posisi persediaan (stok + dalam pesanan). ${rec.length>10?`Menampilkan 10 dari ${rec.length}.`:''}</p>`:empty('Semua SKU di atas ROP','Tidak ada pemesanan ulang yang diperlukan pada service level ini.')}</section>
+  <div class="grid-2"><section class="card" style="padding:0"><div class="card-h" style="padding:16px 16px 0"><h2>Parameter per SKU</h2></div><table class="tbl"><thead><tr>${th('an','code','SKU')}${th('an','abc','Kelas')}${th('an','D','D/thn','num hide-md')}${th('an','cv','CV','num')}${th('an','eoq','EOQ','num')}${th('an','ss','SS','num')}${th('an','rop','ROP','num')}${th('an','pos','Posisi','num hide-md')}<th>Status</th></tr></thead><tbody>${tbody}</tbody></table><div style="padding:0 16px 16px">${pager(rows.length,f.page,per,'anPage')}</div></section>
+   <section class="card"><div class="card-h"><h2>Rincian perhitungan</h2><span class="mono sm">${esc(sel.code)}</span></div><p class="sm muted" style="margin-bottom:8px">${esc(sel.name)}</p>
+    <div class="formula">D = ${fmt(v.D)} /thn · S = ${fmt(DB.settings.S)} · H = ${fmt(v.H)} /unit/thn<br><b>EOQ</b> = √(2·D·S ÷ H) = √(2·${fmt(v.D)}·${fmt(DB.settings.S)} ÷ ${fmt(v.H)}) = <b>${fmt(v.eoq)}</b></div>
+    <div class="formula" style="margin-top:8px">Z = ${f2(v.z)} · σd = ${f2(v.sdd)} /hari · L = ${v.L} hari<br><b>SS</b> = Z·σd·√L = ${f2(v.z)}·${f2(v.sdd)}·√${v.L} = ${f2(v.ssx)} → <b>${fmt(v.ss)}</b></div>
+    <div class="formula" style="margin-top:8px">d = ${f2(v.d)} /hari<br><b>ROP</b> = d·L + SS = ${f2(v.d)}·${v.L} + ${f2(v.ssx)} = ${f2(v.d*v.L+v.ssx)} → <b>${fmt(v.rop)}</b></div>
+    <div class="formula" style="margin-top:8px">CV = σ ÷ μ = ${f2(v.sd)} ÷ ${f2(v.D/12)} = ${f2(v.cv)} → <b>${v.xyz}</b> · kelas nilai <b>${v.abc}</b></div></section></div>`};
+
+VIEWS.slotting=()=>{const t0=performance.now(),lim=UI.slot.limit,prop=proposeLayoutLimited(lim),cur=simDistance(currentLayout()),pr=simDistance(prop),ms=performance.now()-t0,sav=cur-pr,pct=cur?sav/cur*100:0;
+  const tiers=[20,50,100,0].map(L=>{const d=simDistance(proposeLayoutLimited(L));return{L,n:L||'Semua',d,p:cur?(cur-d)/cur*100:0}});
+  const moves=DB.skus.map(s=>({s,a:IDX.loc.get(s.locIds[0]),b:prop.get(s.id)})).filter(m=>m.a.id!==m.b.id).map(m=>({...m,gain:m.s.dv.freq*(m.a.cost-m.b.cost)})).sort((x,y)=>y.gain-x.gain);
+  const same=!moves.length,mxv=Math.max(cur,pr,1),W=560;
+  const bars=`<svg class="chart" viewBox="0 0 ${W} 120" role="img" aria-label="Jarak tempuh picker: sekarang ${f1(cur)} meter, usulan ${f1(pr)} meter"><defs><pattern id="hp" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="var(--primary)"/><line x1="0" y1="0" x2="0" y2="8" stroke="var(--surface)" stroke-width="3"/></pattern></defs>
+   <text x="0" y="16" font-size="13" font-weight="600">Layout sekarang</text><rect x="0" y="22" width="${(cur/mxv)*(W-110)}" height="26" rx="4" class="bar-b"/><text x="${(cur/mxv)*(W-110)+8}" y="40" font-size="13" font-weight="600">${f1(cur)} m</text>
+   <text x="0" y="74" font-size="13" font-weight="600">Layout usulan</text><rect x="0" y="80" width="${(pr/mxv)*(W-110)}" height="26" rx="4" fill="url(#hp)"/><text x="${(pr/mxv)*(W-110)+8}" y="98" font-size="13" font-weight="600">${f1(pr)} m</text></svg>`;
+  const rows=moves.slice(0,10).map(m=>`<tr><td><span class="mono">${esc(m.s.code)}</span><div class="xs muted">${m.s.dv.abc} · ${fmt(Math.round(m.s.dv.freq))} baris/thn</div></td><td class="mono">${m.a.id}<div class="xs muted">${f1(m.a.dist)} m · lv ${m.a.level}</div></td><td class="mono">${m.b.id}<div class="xs muted">${f1(m.b.dist)} m · lv ${m.b.level}</div></td></tr>`).join('');
+  return head('Analitik Teknik Industri','Simulasi jarak tempuh picker pada 60 pesanan demo, sebelum dan sesudah relokasi')+anTabs('slotting')+
+  `<div class="grid-4"><div class="card kpi"><span class="kpi-l">Jarak sekarang</span><span class="kpi-v mono">${f1(cur)} m</span><span class="xs muted">≈ ${f1(cur/72)} menit jalan</span></div>
+   <div class="card kpi"><span class="kpi-l">Jarak usulan</span><span class="kpi-v mono">${f1(pr)} m</span><span class="xs muted">≈ ${f1(pr/72)} menit jalan</span></div>
+   <div class="card kpi"><span class="kpi-l">Penghematan</span><span class="kpi-v mono" style="color:var(--ok-t)">${f1(sav)} m</span><span class="xs muted">${f1(pct)}% lebih pendek</span></div>
+   <div class="card kpi"><span class="kpi-l">SKU direlokasi</span><span class="kpi-v mono">${moves.length}</span><span class="xs muted">dari ${DB.skus.length} SKU</span></div></div>
+  ${baHtml(prop,same)}
+  <div class="grid-2"><section class="card"><div class="card-h"><h2>Total jarak tempuh 60 pesanan</h2><span class="xs muted" role="status">Simulasi dihitung dalam ${f1(ms)} ms</span></div><div class="legend"><span><i class="sw box" style="background:var(--text-2)"></i>Sekarang (abu solid)</span><span><i class="sw box" style="background:repeating-linear-gradient(45deg,var(--primary) 0 3px,var(--surface) 3px 5px)"></i>Usulan (biru bergaris)</span></div>${bars}
+    <fieldset style="border:0;padding:0;margin:16px 0 0"><legend class="lbl-s" style="padding:0;margin-bottom:4px">Batas jumlah SKU yang dipindah</legend><div class="seg" role="radiogroup">${[[20,'20'],[50,'50 (disarankan)'],[100,'100'],[0,'Semua']].map(([v,l])=>`<label><input type="radio" name="lim" value="${v}" data-bind="slotLim" ${lim===v?'checked':''}><span>${l}</span></label>`).join('')}</div><p class="help">Memindahkan SKU butuh tenaga kerja dan waktu henti; dampak per pemindahan menurun.</p></fieldset>
+    <div class="actions" style="margin-top:16px"><button class="btn primary" data-act="applySlot" ${same?'disabled':''}>${ic('route',16)}Terapkan usulan relokasi</button><button class="btn" data-act="revertSlot">${ic('refresh',16)}Kembalikan layout awal</button></div>
+    ${same?'<p class="sm muted" style="margin-top:8px">Layout saat ini sudah sesuai skor slotting. Kembalikan layout awal untuk mengulang simulasi.</p>':''}</section>
+   <section class="card"><div class="card-h"><h2>Skor slotting</h2></div><div class="formula">skor lokasi = 0,7 × (jarak ÷ jarak maks) + 0,3 × penalti ergonomi<br>penalti: level 2–3 = 0 (golden zone) · level 1 = 0,5 · level 4 = 1,0<br>total biaya = Σ frekuensi picking(SKU) × skor(lokasi)</div><p class="sm muted" style="margin-top:8px">Biaya total diminimalkan dengan memasangkan SKU berfrekuensi tertinggi ke lokasi berskor terendah (pertidaksamaan penataan ulang). Rute tiap pesanan: dari dock, nearest-neighbor (jarak Manhattan), kembali ke dock.</p>
+    <h3 style="margin:16px 0 8px">Dampak vs jumlah relokasi</h3><table class="tbl"><thead><tr><th>SKU dipindah</th><th class="num">Jarak</th><th class="num">Hemat</th></tr></thead><tbody>${tiers.map(t=>`<tr><td>${t.n}</td><td class="num mono">${f1(t.d)} m</td><td class="num mono">${f1(t.p)}%</td></tr>`).join('')}</tbody></table></section></div>
+  <section class="card" style="padding:0"><div class="card-h" style="padding:16px 16px 0"><h2>10 relokasi dengan dampak terbesar</h2></div>${rows?`<table class="tbl"><thead><tr><th>SKU</th><th>Dari</th><th>Ke</th></tr></thead><tbody>${rows}</tbody></table>`:empty('Tidak ada relokasi','Layout sudah optimal menurut skor slotting.')}</section>`};
+
+/* ================= VIEW: Peta ================= */
+const utilColor=f=>{const dark=document.documentElement.dataset.theme==='dark';return`hsl(${Math.round(142-142*clamp(f,0,1))} 62% ${dark?40:48}%)`};
+const CLSC={A:['#1D4ED8','#fff'],B:['#F59E0B','#0F172A'],C:['#94A3B8','#0F172A']};
+VIEWS.peta=()=>{const f=UI.map,S=12,ox=100,oy=30,Wm=G.ZW*3+G.GAP*2,Hm=G.ZH*2+G.GAP,px=x=>ox+x*S,py=y=>oy+y*S;let g=`<defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#0F172A" stroke-width="2" opacity=".6"/></pattern></defs>`;
+  ZONES.forEach((z,i)=>{const zc=i%3,zr=Math.floor(i/3);g+=`<text class="zlab" x="${px(zc*(G.ZW+G.GAP))}" y="${py(zr*(G.ZH+G.GAP))-8}">Zona ${z}</text>`});
+  g+=`<rect x="${px(-7)}" y="${py(15)}" width="${4*S}" height="${6*S}" rx="4" fill="var(--accent)"/><text x="${px(-5)}" y="${py(18)+4}" font-size="12" font-weight="700" text-anchor="middle" fill="#0F172A">DOCK</text>`;
+  DB.locs.forEach(l=>{const x=px(l.x-G.CW/2)+.75,y=py(l.y-G.CH/2)+.75,w=G.CW*S-1.5,h=G.CH*S-1.5,s=l.skuId?IDX.sku.get(l.skuId):null,fl=s?l.units/l.cap:0;
+    const fill=!s?'':f.mode==='util'?utilColor(fl):CLSC[s.dv.abc][0],hot=s&&fl>=.95,lab=!s?`Rak ${l.id}, kosong`:`Rak ${l.id}, ${s.code}, terisi ${Math.round(fl*100)}%, kelas ${s.dv.abc}${hot?', melebihi 95%':''}`;
+    g+=`<g class="rack ${s?'':'empty'} ${f.sel===l.id?'sel':''} ${f.hl===l.id?'hl':''}" data-act="selLoc" data-loc="${l.id}" data-gc="${l.zc*10+l.c-1}" data-gr="${l.zr*8+l.r-1}" tabindex="${(f.cur||'A1-01-1')===l.id?0:-1}" role="button" aria-label="${esc(lab)}"><rect class="c" x="${x}" y="${y}" width="${w}" height="${h}" rx="3" ${s?`fill="${fill}"`:''}/>${hot?`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="url(#hatch)" pointer-events="none"/>`:''}${s&&f.mode==='cls'?`<text x="${x+w/2}" y="${y+h/2+4}" font-size="11" font-weight="700" text-anchor="middle" fill="${CLSC[s.dv.abc][1]}" pointer-events="none">${s.dv.abc}</text>`:''}</g>`});
+  const zs=ZONES.map(z=>{const ls=DB.locs.filter(l=>l.zone===z),oc=ls.filter(l=>l.skuId),av=avg(oc.map(l=>l.units/l.cap));return`<tr><td>Zona ${z}</td><td class="num mono">${oc.length}/${ls.length}</td><td class="num mono">${f1(oc.length/ls.length*100)}%</td><td class="num mono">${f1(av*100)}%</td><td class="num mono">${oc.filter(l=>l.units/l.cap>=.95).length}</td></tr>`}).join('');
+  const sl=f.sel&&IDX.loc.get(f.sel),ss=sl&&sl.skuId?IDX.sku.get(sl.skuId):null;
+  const side=!sl?`<p class="sm muted">Pilih rak pada denah (klik, atau fokus lalu tekan Enter; panah untuk berpindah rak) untuk melihat isinya.</p>`:`<h3 class="mono" style="font-size:18px;margin-bottom:8px">${sl.id}</h3>${ss?`<dl class="dl"><dt>SKU</dt><dd class="mono">${esc(ss.code)}</dd><dt>Nama</dt><dd>${esc(ss.name)}</dd><dt>Isi rak</dt><dd class="mono">${fmt(sl.units)} / ${fmt(sl.cap)} ${ss.uom} (${Math.round(sl.units/sl.cap*100)}%)</dd><dt>Kelas</dt><dd>${clsB(ss)}</dd><dt>Jarak ke dock</dt><dd class="mono">${f1(sl.dist)} m · level ${sl.level}</dd></dl><div style="margin-top:12px"><button class="btn sm" data-act="openSku" data-id="${ss.id}">Detail SKU</button></div>`:`<p class="sm muted">Rak kosong · jarak ke dock ${f1(sl.dist)} m · level ${sl.level}.</p>`}`;
+  return head('Peta Gudang','Denah 2D: tiap sel = satu lokasi rak (kolom = bay, baris = sisi × level)',`<fieldset style="border:0;padding:0;margin:0"><legend class="sr">Mode warna</legend><div class="seg"><label><input type="radio" name="mapmode" value="util" data-bind="map.mode" ${f.mode==='util'?'checked':''}><span>Utilisasi rak</span></label><label><input type="radio" name="mapmode" value="cls" data-bind="map.mode" ${f.mode==='cls'?'checked':''}><span>Kelas ABC</span></label></div></fieldset>`)+
+  `<div class="grid-2"><section class="card"><div class="legend">${f.mode==='util'?`<span>0%<i class="scale"></i>100% isi rak</span><span><i class="hatch"></i>≥ 95% (penuh)</span><span><i class="sw box" style="background:var(--surface);border-style:dashed"></i>Kosong</span>`:`<span><i class="sw box" style="background:#1D4ED8"></i>A</span><span><i class="sw box" style="background:#F59E0B"></i>B</span><span><i class="sw box" style="background:#94A3B8"></i>C</span><span><i class="hatch"></i>≥ 95% (penuh)</span>`}</div>
+   <div class="map-wrap" data-mapwrap><svg class="map-svg" viewBox="0 0 ${ox+Wm*S+16} ${oy+Hm*S+12}" role="group" aria-label="Denah gudang 6 zona, 480 lokasi rak">${g}</svg><div class="maptip" hidden></div></div></section>
+   <div class="stack"><section class="card"><div class="card-h"><h2>Isi rak</h2></div>${side}</section>
+   <section class="card" style="padding:0"><div class="card-h" style="padding:16px 16px 0"><h2>Utilisasi per zona</h2></div><table class="tbl"><thead><tr><th>Zona</th><th class="num">Terisi</th><th class="num">Lokasi</th><th class="num">Isi rata²</th><th class="num">≥95%</th></tr></thead><tbody>${zs}</tbody></table></section></div></div>`};
+
+/* ================= VIEW: Laporan ================= */
+VIEWS.laporan=()=>{const K=kpiAll(),oo=OO,crit=criticalSkus(),sts={};DB.pos.forEach(p=>{const s=poStatus(p);sts[s]=(sts[s]||0)+1});const os={};DB.orders.forEach(o=>os[o.status]=(os[o.status]||0)+1);
+  const mx={};DB.skus.forEach(s=>{const k=s.dv.abc;mx[k]=(mx[k]||0)+1});
+  return head('Laporan',`Ringkasan KPI dan stok · ${dFmtY(TODAY)}`,`<button class="btn" data-act="csv" data-k="kpi">${ic('download',16)}CSV KPI</button><button class="btn" data-act="csv" data-k="stok">${ic('download',16)}CSV stok</button><button class="btn primary" data-act="print">${ic('printer',16)}Cetak / simpan PDF</button>`)+
+  `<section class="card" style="margin-bottom:16px"><div class="card-h"><h2>KPI gudang</h2></div><table class="tbl"><thead><tr><th>KPI</th><th>Rumus ringkas</th><th class="num">Nilai</th><th class="num">Target</th><th>Status</th></tr></thead><tbody>${KM.map(m=>{const x=K[m.k];return`<tr><td>${m.l}</td><td class="muted">${m.d}</td><td class="num mono">${x.f(x.val)}</td><td class="num mono">${m.tl}</td><td>${stB(x.st)}</td></tr>`}).join('')}</tbody></table></section>
+  <div class="grid-3"><section class="card"><h2 style="margin-bottom:8px">Persediaan</h2><dl class="dl"><dt>Total SKU</dt><dd class="mono">${fmt(DB.skus.length)}</dd><dt>Nilai stok</dt><dd class="mono">${rpShort(sum(DB.skus.map(s=>onHand(s)*s.price)))}</dd><dt>Kelas A / B / C</dt><dd class="mono">${mx.A} / ${mx.B} / ${mx.C}</dd><dt>Di bawah ROP</dt><dd class="mono">${crit.length}</dd><dt>Service level</dt><dd class="mono">${String(DB.settings.sl).replace('.',',')}%</dd></dl></section>
+   <section class="card"><h2 style="margin-bottom:8px">Purchase order</h2><dl class="dl"><dt>Total PO</dt><dd class="mono">${DB.pos.length}</dd>${['Terbuka','Sebagian','Terlambat','Selesai'].map(k=>`<dt>${k}</dt><dd class="mono">${sts[k]||0}</dd>`).join('')}</dl></section>
+   <section class="card"><h2 style="margin-bottom:8px">Pesanan pelanggan</h2><dl class="dl"><dt>Total pesanan</dt><dd class="mono">${DB.orders.length}</dd>${['Baru','Dalam wave','Siap kirim','Dikirim'].map(k=>`<dt>${k}</dt><dd class="mono">${os[k]||0}</dd>`).join('')}</dl></section></div>
+  <section class="card" style="padding:0"><div class="card-h" style="padding:16px 16px 0"><h2>SKU di bawah ROP</h2></div>${crit.length?`<table class="tbl"><thead><tr><th>SKU</th><th>Kelas</th><th class="num">Stok</th><th class="num">ROP</th><th class="num">Qty rekomendasi</th></tr></thead><tbody>${crit.slice(0,15).map(s=>`<tr><td><span class="mono">${esc(s.code)}</span><div class="xs muted">${esc(s.name)}</div></td><td>${clsB(s)}</td><td class="num mono">${fmt(onHand(s))}</td><td class="num mono">${fmt(s.dv.rop)}</td><td class="num mono">${fmt(recQty(s))}</td></tr>`).join('')}</tbody></table>`:empty('Tidak ada SKU di bawah ROP','Semua stok berada di atas titik pemesanan ulang.')}</section>`};
+
+/* ================= Chrome, overlay, render ================= */
+const NAV=[{id:'dashboard',l:'Dashboard',i:'dashboard',m:['dashboard']},{id:'inventori',l:'Inventori',i:'package',m:['inventori']},{id:'penerimaan',l:'Inbound',i:'inbound',m:['penerimaan','putaway']},{id:'picking',l:'Picking & Kirim',i:'truck',m:['picking']},{id:'analitik',l:'Analitik TI',i:'chart',m:['analitik','sensitivitas','slotting','verifikasi']},{id:'peta',l:'Peta Gudang',i:'map',m:['peta']},{id:'laporan',l:'Laporan',i:'file',m:['laporan']}];
+function renderChrome(){
+  const cnt={penerimaan:DB.tasks.length,picking:DB.orders.filter(o=>o.status==='Baru').length};
+  $('#nav').innerHTML=NAV.map(n=>`<button class="nav-btn" data-act="go" data-v="${n.id}" ${n.m.includes(UI.view)?'aria-current="page"':''} title="${n.l}">${ic(n.i,20)}<span class="lbl">${n.l}</span>${cnt[n.id]?`<span class="cnt" aria-label="${cnt[n.id]} menunggu">${cnt[n.id]}</span>`:''}</button>`).join('');
+  const dark=document.documentElement.dataset.theme==='dark';
+  $('#themeBtn').innerHTML=ic(dark?'sun':'moon');$('#themeBtn').setAttribute('aria-label',dark?'Ganti ke mode terang':'Ganti ke mode gelap');
+  const n=notifs();const b=$('#bellN');b.textContent=n.length;b.hidden=!n.length;
+  const np=$('#notifPop');np.hidden=!UI.notif;if(UI.notif)np.innerHTML=n.length?n.map(x=>`<button data-act="${x.act}" ${x.v?`data-v="${x.v}"`:''} ${x.loc?`data-loc="${x.loc}"`:''}>${ic(x.ic,18)}<span class="sm">${x.t}</span></button>`).join(''):'<p class="sm muted" style="padding:12px">Tidak ada notifikasi.</p>';
+  $('#bellBtn').setAttribute('aria-expanded',String(UI.notif))}
+function notifs(){const c=criticalSkus(),l=DB.pos.filter(p=>poStatus(p)==='Terlambat'),h=DB.locs.filter(x=>x.skuId&&x.units/x.cap>=.95),r=[];
+  if(c.length)r.push({t:`${c.length} SKU di bawah ROP`,ic:'octagon',act:'go',v:'analitik'});if(l.length)r.push({t:`${l.length} PO terlambat`,ic:'alert',act:'lateFilter'});if(h.length)r.push({t:`${h.length} rak melebihi 95%`,ic:'alert',act:'toMap',loc:h[0].id});if(DB.tasks.length)r.push({t:`${DB.tasks.length} tugas putaway menunggu`,ic:'info',act:'go',v:'putaway'});return r}
+function overlayHtml(){let h='';
+  if(UI.drawer&&UI.drawer.type==='sku'){const s=IDX.sku.get(UI.drawer.id);if(s)h+=`<div class="scrim" data-act="closeDrawer"></div><aside class="drawer" role="dialog" aria-modal="true" aria-label="Detail SKU ${esc(s.code)}">${skuDrawer(s)}</aside>`}
+  if(UI.modal)h+=`<div class="scrim" data-act="closeModal"></div><div class="modal${UI.modal==='cc'?' wide':''}" role="dialog" aria-modal="true" aria-label="${{settings:'Pengaturan',cc:'Cycle count',reset:'Reset data',demo:'Pemberitahuan versi demo'}[UI.modal]}">${UI.modal==='settings'?settingsHtml():UI.modal==='cc'?ccHtml():UI.modal==='demo'?demoHtml():resetHtml()}</div>`;
+  if(UI.pick.picker)h+=pickerOverlay();return h}
+function settingsHtml(){const s=DB.settings,dark=document.documentElement.dataset.theme==='dark';
+  return`<div class="card-h"><h2 style="font-size:18px">Pengaturan</h2><button class="btn ghost icon" data-act="closeModal" aria-label="Tutup pengaturan">${ic('x')}</button></div><div class="stack">
+  <fieldset style="border:0;padding:0;margin:0"><legend class="lbl-s" style="margin-bottom:4px;padding:0">Tema tampilan</legend><div class="seg"><label><input type="radio" name="th" value="light" data-bind="theme" ${!dark?'checked':''}><span>Terang</span></label><label><input type="radio" name="th" value="dark" data-bind="theme" ${dark?'checked':''}><span>Gelap</span></label></div></fieldset>
+  <div class="field"><label for="setSL">Service level</label><select id="setSL" class="select" data-bind="sl">${[90,95,97.5,99,99.5].map(v=>`<option value="${v}" ${s.sl===v?'selected':''}>${String(v).replace('.',',')}% (Z = ${f2(Z_TABLE[v])})</option>`).join('')}</select></div>
+  <div class="field"><label for="setS2">Biaya pesan per PO (Rp)</label><input id="setS2" class="input mono" inputmode="numeric" value="${s.S}" data-bind="setS" data-on="change"></div>
+  <div class="field"><label for="setH2">Biaya simpan (% dari harga per tahun)</label><input id="setH2" class="input mono" inputmode="numeric" value="${Math.round(s.hr*100)}" data-bind="setH" data-on="change"><span class="help">Isi 1–60.</span></div>
+  <div class="field"><span class="lbl-s">Bahasa</span><span class="sm muted">Indonesia (versi bahasa Inggris belum tersedia pada demo ini).</span></div>
+  <hr style="border:0;border-top:1px solid var(--border);width:100%"><button class="btn" data-act="resetAsk">${ic('refresh',16)}Reset data demo…</button></div>`}
+function resetHtml(){return`<h2 style="font-size:18px;margin-bottom:8px">Reset data demo?</h2><p class="sm muted" style="margin-bottom:16px">Seluruh perubahan (penerimaan, putaway, wave, PO baru, relokasi, pengaturan) dikembalikan ke data awal.</p><div class="actions" style="justify-content:flex-end"><button class="btn" data-act="closeModal">Batal</button><button class="btn danger" data-act="resetDo">Ya, reset sekarang</button></div>`}
+function renderOverlay(){const tc=$('#toasts');tc.classList.toggle('top',!!UI.pick.picker);tc.classList.toggle('left',!!UI.modal&&!UI.pick.picker);const ov=$('#overlay'),had=ov.innerHTML!=='',h=overlayHtml();if(ov.innerHTML===h)return;ov.innerHTML=h;
+  if(h&&!had){setTimeout(()=>{const el=$('#pkFocus')||ov.querySelector('.drawer button, .modal button, .modal input, .modal select');if(el)el.focus()},30)}
+  else if(!h&&UI.lastFocus&&document.contains(UI.lastFocus)){UI.lastFocus.focus();UI.lastFocus=null}}
+function skeleton(){return`<div class="skel" style="width:240px;height:32px;margin-bottom:24px"></div><div class="grid-4">${'<div class="skel" style="height:130px"></div>'.repeat(4)}</div><div class="skel" style="height:300px" role="status" aria-label="Memuat"></div>`}
+function render(){
+  OO=onOrderMap();const ae=document.activeElement,id=ae&&ae.id,ss=ae&&ae.selectionStart;
+  $('#main').innerHTML=UI.loading?skeleton():VIEWS[UI.view]();
+  if(id&&!UI.loading){const el=document.getElementById(id);if(el){el.focus({preventScroll:true});if(ss!=null&&el.setSelectionRange)try{el.setSelectionRange(ss,ss)}catch(e){}}}
+  renderChrome();renderOverlay();renderTour();save()}
+function navigate(v){const nv=VIEWS[v]?v:'dashboard';UI.view=nv;if(nv==='peta')tf('map');$('#app').classList.remove('nav-open');UI.drawer=null;UI.notif=false;UI.loading=true;document.title=TITLES[nv]+' · WMS-TI';render();clearTimeout(LT);
+  LT=setTimeout(()=>{UI.loading=false;render();if(!UI.modal)$('#main').focus({preventScroll:true});window.scrollTo(0,0);if(UI.pendingDrawer){UI.drawer=UI.pendingDrawer;UI.pendingDrawer=null;UI.lastFocus=null;renderOverlay()}},NODELAY?0:180)}
+function go(v){if(location.hash.slice(1)===v)navigate(v);else location.hash=v}
+
+/* ================= Aksi ================= */
+function approveSkus(skuIds){const rows=skuIds.map(id=>({skuId:id,qty:recQty(IDX.sku.get(id))})),pos=approvePO(rows);tf('approved');
+  toast(pos.length===1?`<b>${pos[0].id}</b> dibuat untuk ${esc(IDX.sup.get(pos[0].supplierId).name)} · ${pos[0].lines.length} SKU · ETA ${dFmt(pos[0].eta)}`:`<b>${pos.length} PO</b> dibuat per pemasok untuk ${rows.length} SKU`);render()}
+const ACT={
+ go:el=>{UI.notif=false;go(el.dataset.v)},
+ toggleSide:()=>{const app=$('#app');if(window.matchMedia&&window.matchMedia('(max-width:640px)').matches){const open=app.classList.toggle('nav-open');if(open){const cur=$('#nav .nav-btn[aria-current=page]')||$('#nav .nav-btn');if(cur)setTimeout(()=>cur.focus(),30)}}else app.classList.toggle('collapsed')},
+ closeNav:()=>{$('#app').classList.remove('nav-open');const m=$('[data-act=toggleSide]');if(m)m.focus()},
+ theme:()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'),
+ openSettings:el=>{UI.lastFocus=el;UI.modal='settings';renderOverlay()},
+ closeModal:()=>{if(UI.modal==='demo'){ackDemo();return}UI.modal=null;renderOverlay()},
+ closeDrawer:()=>{UI.drawer=null;renderOverlay()},
+ resetAsk:()=>{UI.modal='reset';renderOverlay()},
+ resetDo:()=>{resetAll();UI.modal=null;Object.assign(UI.inv,{q:'',cat:'',abc:'',st:'',page:1,sel:new Set()});UI.in.edits={};UI.in.poSel='PO-26-0412';UI.pick.sel=new Set();UI.pick.picker=false;UI.an.cell=null;UI.put.sel=null;UI.map.sel=null;UI.map.hl=null;UI.tour.flags={};UI.cc={rows:[],err:{}};UI.an.ms=recompute();toast('Data demo dikembalikan ke kondisi awal','info');render()},
+ toggleNotif:el=>{UI.notif=!UI.notif;renderChrome()},
+ toastx:el=>el.closest('.toast').remove(),
+ sort:el=>{const s=UI[el.dataset.t],k=el.dataset.k;if(s.sort===k)s.dir*=-1;else{s.sort=k;s.dir=1}s.page=1;render()},
+ invPage:el=>{UI.inv.page=+el.dataset.p;render()},anPage:el=>{UI.an.page=+el.dataset.p;render()},
+ invClear:()=>{Object.assign(UI.inv,{q:'',cat:'',abc:'',st:'',page:1});render()},
+ selClear:()=>{UI.inv.sel=new Set();render()},
+ openSku:(el,e)=>{if(e.target.closest('input'))return;UI.lastFocus=el;UI.drawer={type:'sku',id:el.dataset.id};renderOverlay()},
+ exportInv:()=>{const r=invRows();dataCSV('inventori-wms-ti.csv',[['Kode','Nama','Kategori','Kelas','Stok','ROP','Lokasi','Umur (hari)','Status'],...r.map(x=>[x.s.code,x.s.name,x.s.cat,x.s.dv.abc+x.s.dv.xyz,x.h,x.s.dv.rop,x.s.locIds[0],x.s.ageD,x.st])]);toast(`${r.length} baris diekspor ke CSV`)},
+ exportSel:()=>{const r=invRows().filter(x=>UI.inv.sel.has(x.s.id));dataCSV('inventori-terpilih.csv',[['Kode','Nama','Kelas','Stok','ROP','Status'],...r.map(x=>[x.s.code,x.s.name,x.s.dv.abc+x.s.dv.xyz,x.h,x.s.dv.rop,x.st])]);toast(`${r.length} baris terpilih diekspor`)},
+ approveOne:el=>approveSkus([el.dataset.sku]),
+ approveAll:()=>approveSkus(criticalSkus().map(s=>s.id)),
+ lateFilter:()=>{UI.in.poF='Terlambat';const l=DB.pos.find(p=>poStatus(p)==='Terlambat');if(l)UI.in.poSel=l.id;UI.notif=false;go('penerimaan')},
+ poClear:()=>{UI.in.poF='';UI.in.poQ='';render()},
+ poSel:el=>{UI.in.poSel=el.dataset.id;UI.in.tried=false;render()},
+ receive:()=>{const po=DB.pos.find(p=>p.id===UI.in.poSel);UI.in.tried=true;const er=validateIn(po);if(Object.keys(er).length){render();toast('Periksa kolom yang ditandai merah sebelum konfirmasi','err');return}
+   UI.in.busy=true;render();setTimeout(()=>{const ent=po.lines.map((l,i)=>{const e=UI.in.edits[po.id+':'+i]||{},q=e.q===undefined||e.q===''?poOut(l):+e.q;return{idx:i,qty:q,reason:e.r||''}}),r=receivePO(po.id,ent);
+     po.lines.forEach((l,i)=>delete UI.in.edits[po.id+':'+i]);UI.in.busy=false;UI.in.tried=false;tf('received');
+     toast(`<b>${po.id}</b> diterima: ${fmt(r.units)} unit. ${r.tasks} tugas putaway dibuat${r.vars?`, ${r.vars} selisih dicatat`:''}.`);UI.put.sel=null;render()},650)},
+ putTask:el=>{UI.put.sel=el.dataset.id;render()},
+ place:el=>{UI.put.busy=true;render();setTimeout(()=>{const r=placeTask(UI.put.sel,el.dataset.loc);UI.put.busy=false;
+   if(r.error){toast(r.error,'err')}else{tf('placed');UI.map.hl=r.loc.id;UI.map.sel=r.loc.id;toast(`${fmt(r.placed)} unit disimpan di <b>${r.loc.id}</b>${r.left?`. Sisa ${fmt(r.left)} unit masih menunggu lokasi berikutnya.`:r.done?'. Tugas putaway selesai.':''}`)}render()},400)},
+ toMap:el=>{if(!el.dataset.loc)return;UI.map.sel=el.dataset.loc;UI.map.hl=el.dataset.loc;UI.map.cur=el.dataset.loc;UI.notif=false;go('peta')},
+ selLoc:el=>{UI.map.sel=el.dataset.loc;UI.map.cur=el.dataset.loc;render()},
+ anCell:el=>{UI.an.cell=UI.an.cell===el.dataset.c||!el.dataset.c?null:el.dataset.c;UI.an.page=1;render()},
+ anRow:el=>{UI.an.row=el.dataset.id;render()},
+ pickTop:()=>{UI.pick.sel=new Set(DB.orders.filter(o=>o.status==='Baru').sort((a,b)=>b.ageH-a.ageH).slice(0,5).map(o=>o.id));render()},
+ makeWave:()=>{const w=createWave([...UI.pick.sel]);tf('wave');UI.pick.sel=new Set();toast(`<b>${w.id}</b> dibuat: ${w.orderIds.length} pesanan, ${w.stops.length} perhentian, rute ${f1(w.dist)} m`);render()},
+ openPicker:el=>{UI.lastFocus=el;UI.pick.picker=true;renderOverlay()},
+ closePicker:()=>{UI.pick.picker=false;renderOverlay();render()},
+ stop:el=>{const r=confirmStop(+el.dataset.i);render();if(r&&r.finished)toast('Wave selesai. Pesanan siap dikirim.');const f=$('#pkFocus');if(f)f.focus()},
+ pickAll:()=>{const w=DB.wave;w.stops.forEach((s,i)=>{if(!s.done)confirmStop(i)});toast('Seluruh perhentian ditandai diambil. Pesanan siap dikirim.');render()},
+ ship:el=>{if(shipOrder(el.dataset.id))toast(`<b>${el.dataset.id}</b> dikirim`);render()},
+ shipAll:()=>{let n=0;DB.orders.filter(o=>o.status==='Siap kirim').forEach(o=>{if(shipOrder(o.id))n++});toast(`${n} pesanan dikirim`);render()},
+ applySlot:()=>{const c=simDistance(currentLayout()),m=proposeLayoutLimited(UI.slot.limit);applyLayout(m);tf('slot');const n=simDistance(currentLayout());toast(`Relokasi diterapkan. Jarak tempuh ${f1(c)} m → ${f1(n)} m (${f1((1-n/c)*100)}% lebih pendek)`);render()},
+ revertSlot:()=>{applyLayout(layout0Map());toast('Layout awal dikembalikan','info');render()},
+ csv:el=>{if(el.dataset.k==='kpi'){const K=kpiAll();dataCSV('kpi-wms-ti.csv',[['KPI','Nilai','Target','Status'],...KM.map(m=>[m.l,K[m.k].f(K[m.k].val),m.tl,K[m.k].stT])])}
+   else dataCSV('stok-wms-ti.csv',[['Kode','Nama','Kategori','Kelas','Stok','Dalam PO','D/thn','EOQ','SS','ROP','Status'],...DB.skus.map(s=>[s.code,s.name,s.cat,s.dv.abc+s.dv.xyz,onHand(s),OO.get(s.id)||0,s.dv.D,s.dv.eoq,s.dv.ss,s.dv.rop,stockStatus(s,OO)])]);toast('File CSV diunduh')},
+ print:()=>window.print(),
+ openResult:el=>{const t=el.dataset.t,id=el.dataset.id;UI.search.q='';$('#gs').value='';$('#searchRes').hidden=true;
+   if(t==='sku'){const d={type:'sku',id};if(UI.view!=='inventori'){UI.pendingDrawer=d;go('inventori')}else{UI.lastFocus=null;UI.drawer=d;renderOverlay()}}else if(t==='po'){UI.in.poSel=id;UI.in.poF='';UI.in.poQ='';go('penerimaan')}else go('picking')}};
+function setTheme(t){document.documentElement.dataset.theme=t;try{localStorage.setItem(THEME_KEY,t)}catch(e){}render()}
+function applySettings(){UI.an.ms=recompute();render()}
+const BIND={
+ kpiSel:el=>{UI.kpiSel=el.value;render()},
+ 'inv.q':el=>{UI.inv.q=el.value;UI.inv.page=1;render()},'inv.cat':el=>{UI.inv.cat=el.value;UI.inv.page=1;render()},'inv.abc':el=>{UI.inv.abc=el.value;UI.inv.page=1;render()},'inv.st':el=>{UI.inv.st=el.value;UI.inv.page=1;render()},
+ 'inv.pick':el=>{el.checked?UI.inv.sel.add(el.dataset.id):UI.inv.sel.delete(el.dataset.id);render()},
+ 'inv.all':el=>{const f=UI.inv,rows=invRows().slice((f.page-1)*15,f.page*15);rows.forEach(x=>el.checked?f.sel.add(x.s.id):f.sel.delete(x.s.id));render()},
+ 'in.poQ':el=>{UI.in.poQ=el.value;render()},'in.poF':el=>{UI.in.poF=el.value;render()},
+ 'in.q':el=>{const k=UI.in.poSel+':'+el.dataset.i;UI.in.edits[k]=Object.assign(UI.in.edits[k]||{},{q:el.value.trim()});render()},
+ 'in.r':el=>{const k=UI.in.poSel+':'+el.dataset.i;UI.in.edits[k]=Object.assign(UI.in.edits[k]||{},{r:el.value});render()},
+ 'pick.sel':el=>{if(el.checked){if(UI.pick.sel.size>=10){el.checked=false;toast('Maksimal 10 pesanan per wave','err');return}UI.pick.sel.add(el.dataset.id)}else UI.pick.sel.delete(el.dataset.id);render()},
+ sl:el=>{DB.settings.sl=+el.value;if(DB.settings.sl!==95)tf('sl');applySettings()},
+ setS:el=>{const v=+String(el.value).replace(/\D/g,'');if(v>=1000){DB.settings.S=v;applySettings()}else{toast('Biaya pesan minimal Rp 1.000','err');render()}},
+ setH:el=>{const v=+el.value;if(v>=1&&v<=60){DB.settings.hr=v/100;applySettings()}else{toast('Biaya simpan harus 1–60%','err');render()}},
+ theme:el=>setTheme(el.value),
+ 'map.mode':el=>{UI.map.mode=el.value;render()},slotLim:el=>{UI.slot.limit=+el.value;render()},sensPct:el=>{UI.sens.pct=+el.value/100;render()},sensSku:el=>{UI.sens.sku=el.value;render()},
+ gs:el=>{UI.search.q=el.value;renderSearch()}};
+function renderSearch(){const q=UI.search.q.trim().toLowerCase(),box=$('#searchRes');if(q.length<2){box.hidden=true;return}
+  const sk=DB.skus.filter(s=>s.code.toLowerCase().includes(q)||s.name.toLowerCase().includes(q)).slice(0,5),po=DB.pos.filter(p=>p.id.toLowerCase().includes(q)).slice(0,3),so=DB.orders.filter(o=>o.id.toLowerCase().includes(q)||o.customer.toLowerCase().includes(q)).slice(0,3);
+  let h='';if(sk.length)h+='<div class="grp">SKU</div>'+sk.map(s=>`<button data-act="openResult" data-t="sku" data-id="${s.id}"><span class="mono">${esc(s.code)}</span><span class="sm muted">${esc(s.name)}</span></button>`).join('');
+  if(po.length)h+='<div class="grp">Purchase order</div>'+po.map(p=>`<button data-act="openResult" data-t="po" data-id="${p.id}"><span class="mono">${p.id}</span><span class="sm muted">${esc(IDX.sup.get(p.supplierId).name)}</span></button>`).join('');
+  if(so.length)h+='<div class="grp">Pesanan</div>'+so.map(o=>`<button data-act="openResult" data-t="so" data-id="${o.id}"><span class="mono">${o.id}</span><span class="sm muted">${esc(o.customer)}</span></button>`).join('');
+  box.innerHTML=h||'<p class="sm muted" style="padding:12px">Tidak ada hasil.</p>';box.hidden=false}
+
+/* ================= Event ================= */
+document.addEventListener('click',e=>{const el=e.target.closest('[data-act]');
+  if(!el){if(!e.target.closest('#bellWrap')&&UI.notif){UI.notif=false;renderChrome()}if(!e.target.closest('.gsearch'))$('#searchRes').hidden=true;return}
+  const a=ACT[el.dataset.act];if(a)a(el,e)});
+function onInput(e){const el=e.target.closest&&e.target.closest('[data-bind]');if(!el)return;const b=BIND[el.dataset.bind];if(!b)return;
+  const textual=el.tagName==='INPUT'&&['text','search','number'].includes(el.type),mode=el.dataset.on||(textual?'input':'change');if(e.type!==mode)return;b(el)}
+document.addEventListener('input',onInput);document.addEventListener('change',onInput);
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){if($('#app').classList.contains('nav-open')){ACT.closeNav();return}if(UI.pick.picker){ACT.closePicker();return}if(UI.modal){ACT.closeModal();return}if(UI.drawer){ACT.closeDrawer();return}if(UI.notif){UI.notif=false;renderChrome()}return}
+  if(e.key==='Tab'&&(UI.drawer||UI.modal||UI.pick.picker)){const box=$('#overlay .picker')||$('#overlay .modal')||$('#overlay .drawer');
+    if(box){const f=[...box.querySelectorAll('button:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(x=>x.offsetParent!==null),a=document.activeElement;
+      if(f.length){if(!box.contains(a)){e.preventDefault();f[0].focus()}else if(e.shiftKey&&a===f[0]){e.preventDefault();f[f.length-1].focus()}else if(!e.shiftKey&&a===f[f.length-1]){e.preventDefault();f[0].focus()}}}}
+  const t=e.target;
+  if((e.key==='Enter'||e.key===' ')&&t.matches&&t.matches('[role=button][data-act]')&&!t.matches('button')){e.preventDefault();t.click();return}
+  const c=t.closest&&t.closest('svg.chart[data-chart]');if(c&&(e.key==='ArrowLeft'||e.key==='ArrowRight')){e.preventDefault();const id=c.dataset.chart,cc=CH[id],i=(cc.idx==null?cc.labels.length-1:cc.idx)+(e.key==='ArrowRight'?1:-1);showTip(id,i);return}
+  const r=t.closest&&t.closest('.rack');if(r&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();let gc=+r.dataset.gc,gr=+r.dataset.gr;if(e.key==='ArrowLeft')gc--;if(e.key==='ArrowRight')gc++;if(e.key==='ArrowUp')gr--;if(e.key==='ArrowDown')gr++;
+    const n=document.querySelector(`.rack[data-gc="${gc}"][data-gr="${gr}"]`);if(n){r.tabIndex=-1;n.tabIndex=0;n.focus();UI.map.cur=n.dataset.loc}}});
+document.addEventListener('mousemove',e=>{const s=e.target.closest&&e.target.closest('svg.chart[data-chart]');if(!s)return;const id=s.dataset.chart,c=CH[id];if(!c)return;const r=s.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*c.W;let bi=0,bd=1e9;c.xs.forEach((xx,i)=>{const d=Math.abs(xx-x);if(d<bd){bd=d;bi=i}});showTip(id,bi)});
+document.addEventListener('mouseout',e=>{const s=e.target.closest&&e.target.closest('svg.chart[data-chart]');if(s&&!(e.relatedTarget&&s.contains(e.relatedTarget)))hideTip(s.dataset.chart)});
+function mapTip(e){const r=e.target.closest&&e.target.closest('.rack');const w=document.querySelector('[data-mapwrap]');if(!w)return;const tip=$('.maptip',w);
+  if(!r){tip.hidden=true;return}const l=IDX.loc.get(r.dataset.loc),s=l.skuId?IDX.sku.get(l.skuId):null,wb=w.getBoundingClientRect(),rb=r.getBoundingClientRect();
+  tip.innerHTML=s?`<b>${l.id}</b> · ${esc(s.code)} · ${Math.round(l.units/l.cap*100)}% · kelas ${s.dv.abc}`:`<b>${l.id}</b> · kosong`;tip.style.left=(rb.left-wb.left+rb.width/2)+'px';tip.style.top=(rb.top-wb.top)+'px';tip.hidden=false}
+document.addEventListener('mouseover',mapTip);document.addEventListener('focusin',mapTip);
+document.addEventListener('focusout',e=>{if(e.target.closest&&e.target.closest('.rack')){const t=document.querySelector('.maptip');if(t)t.hidden=true}});
+window.addEventListener('hashchange',()=>navigate(location.hash.slice(1)));
+
+/* ================= Init ================= */
+function init(){
+  let th=null;try{th=localStorage.getItem(THEME_KEY)}catch(e){}if(th!=='light'&&th!=='dark'){const cur=document.documentElement.dataset.theme;th=(cur==='dark'||cur==='light')?cur:(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}document.documentElement.dataset.theme=th;
+  try{loadDb()}catch(e){console.error(e);resetAll()}
+  UI.an.ms=recompute();
+  document.addEventListener('input',e=>{if(e.target.id==='gs')BIND.gs(e.target)});
+  navigate(location.hash.slice(1)||'dashboard');
+  let ack=false;try{ack=sessionStorage.getItem('wms-ti-ack')==='1'}catch(e){}
+  if(!ack&&!/nodelay|nodemo/.test(location.search)){UI.modal='demo';renderOverlay()}}
+/* ================= Tambahan: tur demo, verifikasi rumus, cycle count, analisis persediaan ================= */
+IC.play='<polygon points="6 3 20 12 6 21 6 3"/>';
+UI.tour={open:false,step:0,flags:{},list:false};
+UI.cc={rows:[],err:{}};
+let WELCOME_SEEN=false;try{WELCOME_SEEN=localStorage.getItem('wms-ti-welcome')==='1'}catch(e){}
+const tf=k=>{UI.tour.flags[k]=true};
+const nf4=new Intl.NumberFormat('id-ID',{maximumFractionDigits:4});
+const focusId=id=>setTimeout(()=>{const n=document.getElementById(id);if(n)n.focus()},60);
+
+/* ---------- Tur demo ---------- */
+const TOUR=[
+ {v:'dashboard',f:'approved',t:'Baca kondisi gudang',d:'Lihat 7 KPI dan peringatan di Dashboard. Klik “Setujui PO” pada salah satu SKU kritis.'},
+ {v:'analitik',f:'sl',t:'Ubah service level',d:'Pilih 99% pada Service level. Safety stock, ROP, dan jumlah SKU di bawah ROP berubah seketika.'},
+ {v:'penerimaan',f:'received',t:'Terima barang dari PO',d:'Pilih PO-26-0412 lalu klik “Konfirmasi penerimaan”. Sistem membuat tugas putaway otomatis.'},
+ {v:'putaway',f:'placed',t:'Simpan ke lokasi saran',d:'Baca alasan tiap saran (kelas, jarak, kapasitas), lalu klik “Simpan di sini”.'},
+ {v:'peta',f:'map',t:'Lihat di peta gudang',d:'Rak yang baru terisi berkedip. Klik sebuah rak untuk melihat isinya, atau ganti mode warna ke Kelas ABC.'},
+ {v:'picking',f:'wave',t:'Buat wave picking',d:'Klik “Pilih 5 teratas”, lalu “Buat wave picking”, dan “Buka layar picker” untuk melihat rute di peta.'},
+ {v:'slotting',f:'slot',t:'Simulasi slotting',d:'Pilih batas 50 SKU, lalu “Terapkan usulan relokasi”. Jarak tempuh picker turun.'}];
+function tourHtml(){const T=UI.tour;if(!T.open)return'';const st=TOUR[T.step],done=TOUR.filter(s=>T.flags[s.f]).length,ok=!!T.flags[st.f],here=UI.view===st.v||(st.v==='analitik'&&UI.view==='analitik');
+  return`<section class="tour" role="region" aria-label="Tur demo"><div class="tour-h"><div><b>Tur demo</b> <span class="xs muted">langkah ${T.step+1} dari ${TOUR.length} · ${done} selesai</span></div><button class="btn ghost icon" style="width:36px;min-height:36px" id="tourX" data-act="tourClose" aria-label="Tutup tur demo">${ic('x',18)}</button></div>
+  <div class="progress" role="progressbar" aria-label="Progres tur" aria-valuemin="0" aria-valuemax="${TOUR.length}" aria-valuenow="${done}"><i style="width:${done/TOUR.length*100}%"></i></div>
+  <h3 style="margin-top:12px">${T.step+1}. ${esc(st.t)}</h3><p class="sm" style="margin:4px 0 8px">${esc(st.d)}</p>
+  ${ok?`<div style="margin-bottom:8px">${badge('success','Langkah ini selesai')}</div>`:''}
+  <details id="tourList" ${T.list?'open':''}><summary class="sm">Semua langkah</summary><ol class="tour-l">${TOUR.map((s,i)=>`<li><button class="linkbtn" style="min-height:36px;text-decoration:${i===T.step?'none':'underline'};font-weight:${i===T.step?700:400}" data-act="tourJump" data-i="${i}" ${i===T.step?'aria-current="step"':''}>${T.flags[s.f]?ic('checkc',14)+' ':''}${esc(s.t)}</button></li>`).join('')}</ol></details>
+  <div class="tour-f"><button class="btn sm" id="tourPrev" data-act="tourPrev" ${T.step===0?'disabled':''}>Sebelumnya</button>${here?'':`<button class="btn sm" data-act="go" data-v="${st.v}">Buka halaman</button>`}<button class="btn sm primary" id="tourNext" data-act="tourNext">${T.step===TOUR.length-1?'Selesai':'Berikutnya'}</button></div></section>`}
+function renderTour(){const el=$('#tour');if(!el)return;const h=tourHtml();if(el.innerHTML===h)return;
+  const fid=el.contains(document.activeElement)?document.activeElement.id:'';el.innerHTML=h;if(fid){const n=document.getElementById(fid);if(n)n.focus()}}
+function welcomeHtml(){if(WELCOME_SEEN)return'';
+  return`<section class="card welcome" aria-label="Selamat datang"><div style="flex:1;min-width:260px"><h2 style="font-size:18px">Selamat datang di demo WMS-TI</h2><p class="sm" style="margin-top:4px">Gudang distribusi suku cadang industri yang dikelola dengan metode teknik industri: ABC-XYZ, EOQ, safety stock, slotting, dan rute picking. Semua angka dihitung dari data demo, bukan angka tetap. Perubahan tersimpan di browser ini dan bisa direset dari Pengaturan.</p></div>
+  <div class="actions"><button class="btn primary" data-act="tourStart">${ic('play',16)}Mulai tur 3 menit</button><button class="btn" data-act="go" data-v="verifikasi">${ic('checkc',16)}Lihat verifikasi rumus</button><button class="btn ghost" data-act="welcomeClose">Jelajahi sendiri</button></div></section>`}
+function markWelcome(){WELCOME_SEEN=true;try{localStorage.setItem('wms-ti-welcome','1')}catch(e){}}
+function tourGoStep(){const st=TOUR[UI.tour.step];renderTour();if(UI.view!==st.v)go(st.v)}
+Object.assign(ACT,{
+ tourToggle:()=>{UI.tour.open?ACT.tourClose():ACT.tourStart()},
+ tourStart:()=>{markWelcome();UI.tour.open=true;const i=TOUR.findIndex(s=>!UI.tour.flags[s.f]);UI.tour.step=i<0?0:i;const st=TOUR[UI.tour.step];if(UI.view!==st.v)go(st.v);else render();focusId('tourNext')},
+ tourClose:()=>{UI.tour.open=false;renderTour()},
+ tourNext:()=>{if(UI.tour.step>=TOUR.length-1){UI.tour.open=false;renderTour();toast('Tur selesai. Silakan jelajahi sendiri, atau buka tab Verifikasi rumus untuk melihat bukti perhitungan.','info');return}UI.tour.step++;tourGoStep();focusId('tourNext')},
+ tourPrev:()=>{if(UI.tour.step>0){UI.tour.step--;tourGoStep();focusId('tourPrev')}},
+ tourJump:el=>{UI.tour.step=+el.dataset.i;tourGoStep();focusId('tourNext')},
+ welcomeClose:()=>{markWelcome();render()}});
+document.addEventListener('toggle',e=>{if(e.target&&e.target.id==='tourList')UI.tour.list=e.target.open},true);
+
+/* ---------- Cycle count ---------- */
+const ccDiff=d=>d===null?'<span class="muted">—</span>':d===0?badge('success','Sesuai'):badge('warning',(d>0?'+':'−')+Math.abs(d)+' · akan dikoreksi');
+function ccHtml(){const rows=UI.cc.rows;
+  return`<div class="card-h"><h2 style="font-size:18px">Cycle count</h2><button class="btn ghost icon" data-act="closeModal" aria-label="Tutup cycle count">${ic('x')}</button></div>
+  <p class="sm muted" style="margin-bottom:12px">Hitung fisik 8 lokasi: 4 kelas A, 3 kelas B, 1 kelas C (kelas A dihitung lebih sering). Kolom Fisik sudah berisi contoh hasil hitung; ubah angkanya untuk mencoba selisih. Akurasi stok = lokasi sesuai ÷ lokasi dihitung, kumulatif (sekarang ${f1(DB.cycle.matched/DB.cycle.counted*100)}% dari ${fmt(DB.cycle.counted)} lokasi).</p>
+  <table class="tbl"><thead><tr><th>Lokasi</th><th>SKU</th><th class="num">Sistem</th><th>Fisik</th><th>Selisih</th></tr></thead><tbody>${rows.map((r,i)=>{const sk=IDX.sku.get(r.skuId),bad=UI.cc.err[i],ph=String(r.phys).trim(),d=/^\d+$/.test(ph)?+ph-r.sys:null;
+   return`<tr><td class="mono">${r.locId}</td><td><span class="mono">${esc(sk.code)}</span> ${clsB(sk)}</td><td class="num mono">${fmt(r.sys)}</td><td><label class="sr" for="cc${i}">Jumlah fisik ${esc(r.locId)}</label><input id="cc${i}" class="input num mono ${bad?'err':''}" style="width:96px" inputmode="numeric" value="${esc(r.phys)}" data-bind="cc.q" data-on="change" data-i="${i}" ${bad?`aria-invalid="true" aria-describedby="cce${i}"`:''}>${bad?`<div class="err-t" id="cce${i}">${ic('octagon',12)}${bad}</div>`:''}</td><td class="ccst">${ccDiff(d)}</td></tr>`}).join('')}</tbody></table>
+  <div class="actions" style="justify-content:flex-end;margin-top:16px"><button class="btn" data-act="closeModal">Batal</button><button class="btn primary" data-act="ccDo">${ic('check',16)}Konfirmasi hitung</button></div>`}
+Object.assign(ACT,{
+ openCC:el=>{UI.lastFocus=el;UI.cc={rows:ccBatch().map(r=>({...r,phys:String(r.phys)})),err:{}};UI.modal='cc';renderOverlay()},
+ ccDo:()=>{const err={};UI.cc.rows.forEach((r,i)=>{if(!/^\d+$/.test(String(r.phys).trim()))err[i]='Masukkan bilangan bulat ≥ 0'});
+   if(Object.keys(err).length){UI.cc.err=err;renderOverlay();toast('Periksa kolom Fisik yang ditandai merah','err');focusId('cc'+Object.keys(err)[0]);return}
+   const r=ccApply(UI.cc.rows.map(x=>({locId:x.locId,phys:+String(x.phys).trim()})));UI.modal=null;
+   toast(`${r.counted} lokasi dihitung, ${r.fixed?r.fixed+' selisih dikoreksi':'semua sesuai'}. Akurasi stok kini <b>${f1(r.acc)}%</b>.`);render()}});
+Object.assign(BIND,{'cc.q':el=>{const i=+el.dataset.i,v=el.value.trim();UI.cc.rows[i].phys=v;delete UI.cc.err[i];
+   const e=el.parentNode.querySelector('.err-t');if(e)e.remove();el.classList.remove('err');el.removeAttribute('aria-invalid');
+   const c=el.closest('tr').querySelector('.ccst');if(c)c.innerHTML=ccDiff(/^\d+$/.test(v)?+v-UI.cc.rows[i].sys:null)}});
+
+/* ---------- Analisis persediaan di tab Analitik ---------- */
+function insightHtml(){const sc=slScenarios(),ins=invInsight(),K=kpiNow(),lo=sc[0],hi=sc[sc.length-1];
+  return`<div class="grid-eq"><section class="card"><div class="card-h"><h2>Biaya service level</h2><span class="xs muted">Estimasi: stok bergeser sebesar selisih safety stock (SS)</span></div>
+   <table class="tbl"><thead><tr style="white-space:nowrap"><th>Service level</th><th class="num">Nilai SS</th><th class="num">Δ stok</th><th class="num">Turnover</th></tr></thead><tbody>${sc.map(r=>`<tr class="${r.cur?'sel':''}" style="white-space:nowrap"><td>${String(r.sl).replace('.',',')}% ${r.cur?badge('info','sekarang'):''}</td><td class="num mono">${rpShort(r.ssVal)}</td><td class="num mono">${r.dInv===0?'—':(r.dInv>0?'+':'−')+rpShort(Math.abs(r.dInv))}</td><td class="num mono">${f2(r.turn)}×</td></tr>`).join('')}</tbody></table></section>
+   <section class="card"><div class="card-h"><h2>Mengapa turnover ${f1(K.turn)}×?</h2></div>
+   <dl class="dl"><dt>Safety stock</dt><dd class="mono">${f1(ins.ssShare*100)}% dari nilai stok</dd><dt>Kelas Z</dt><dd>${ins.zN} SKU menyimpan <b class="mono">${f1(ins.zShare*100)}%</b> nilai stok dengan turnover <b class="mono">${f1(ins.zTurn)}×</b> (kelas X: <span class="mono">${f1(ins.xTurn)}×</span>)</dd><dt>Service level</dt><dd>${f2(lo.turn)}× pada ${String(lo.sl).replace('.',',')}% vs ${f2(hi.turn)}× pada ${String(hi.sl).replace('.',',')}%</dd></dl>
+   <p class="sm muted" style="margin-top:8px">Item bergejolak dan bernilai tinggi butuh penyangga besar. Service level global hanya menggeser turnover sedikit; tuas yang lebih besar ada di kelas Z, misalnya service level lebih rendah khusus Z atau pesan sesuai permintaan (lihat strategi sel CZ dan BZ pada matriks).</p></section></div>`}
+
+/* ---------- Verifikasi rumus ---------- */
+const verifyChip=()=>{const v=verifyRun();return`<button class="btn" data-act="go" data-v="verifikasi">${ic('checkc',16)}Rumus terverifikasi ${v.pass}/${v.total}</button>`};
+VIEWS.verifikasi=()=>{const v=verifyRun(),k=verifySkus(),set=DB.settings,all=v.pass===v.total&&k.pass===k.total;
+  const r1=v.rows.map(r=>`<tr><td>${badge('neutral',r.g)}</td><td>${esc(r.n)}<div class="xs muted">${esc(r.inp)}</div></td><td class="mono xs">${esc(r.hand)}</td><td class="num mono">${esc(typeof r.exp==='number'?nf4.format(r.exp):r.exp)}</td><td class="num mono">${esc(typeof r.act==='number'?nf4.format(r.act):r.act)}</td><td>${r.pass?badge('success','Lulus'):badge('danger','Gagal')}</td></tr>`).join('');
+  const r2=k.rows.map(r=>{const c=(a,b)=>a===b?`<span class="mono">${fmt(a)}</span>`:`<span class="mono err-t">${fmt(a)} ≠ ${fmt(b)}</span>`;
+   return`<tr><td><span class="mono">${esc(r.s.code)}</span><div class="xs muted">${esc(r.s.name)}</div></td><td class="num mono">${fmt(r.D)}</td><td class="num mono">${r.L}</td><td class="num">${c(r.ref.eoq,r.app.eoq)}</td><td class="num">${c(r.ref.ss,r.app.ss)}</td><td class="num">${c(r.ref.rop,r.app.rop)}</td><td class="mono">${r.ref.xyz===r.app.xyz?r.ref.xyz:r.ref.xyz+' ≠ '+r.app.xyz} <span class="xs muted">(CV ${f2(r.ref.cv)})</span></td><td>${r.pass?badge('success','Cocok'):badge('danger','Beda')}</td></tr>`}).join('');
+  return head('Analitik Teknik Industri','Bukti bahwa angka di layar benar: kasus hitung manual, cek silang data nyata, dan ekspor untuk spreadsheet',`<button class="btn primary" data-act="csvVerify">${ic('download',16)}Ekspor CSV cek silang</button>`)+anTabs('verifikasi')+
+  `<div class="grid-3"><div class="card kpi"><span class="kpi-l">Kasus hitung manual</span><span class="kpi-v mono">${v.pass}/${v.total}</span><span class="xs muted">${all?badge('success','Semua lulus'):badge('danger','Ada yang gagal')}</span></div>
+   <div class="card kpi"><span class="kpi-l">Cek silang data nyata</span><span class="kpi-v mono">${k.pass}/${k.total}</span><span class="xs muted">SKU dihitung ulang dari data mentah 12 bulan</span></div>
+   <div class="card kpi"><span class="kpi-l">Parameter yang dipakai</span><span class="kpi-v mono">${String(set.sl).replace('.',',')}%</span><span class="xs muted">service level · S Rp ${fmt(set.S)} · H ${Math.round(set.hr*100)}% harga/tahun</span></div></div>
+  <section class="card" style="padding:0;margin-bottom:16px"><div class="card-h" style="padding:16px 16px 0"><h2>Kasus dengan jawaban hitung manual</h2><span class="xs muted">Jawaban dihitung dengan tangan lebih dulu, lalu dibandingkan dengan fungsi aplikasi</span></div><table class="tbl"><thead><tr><th>Rumus</th><th>Kasus</th><th>Hitung manual</th><th class="num">Harapan</th><th class="num">Hasil aplikasi</th><th>Status</th></tr></thead><tbody>${r1}</tbody></table></section>
+  <section class="card" style="padding:0;margin-bottom:16px"><div class="card-h" style="padding:16px 16px 0"><h2>Cek silang 5 SKU nyata</h2><span class="xs muted">Dihitung ulang dengan kode terpisah (tanpa memanggil fungsi EOQ/SS/ROP di atas)</span></div><table class="tbl"><thead><tr><th>SKU</th><th class="num">D/thn</th><th class="num">L (hari)</th><th class="num">EOQ</th><th class="num">SS</th><th class="num">ROP</th><th>XYZ</th><th>Status</th></tr></thead><tbody>${r2}</tbody></table></section>
+  <div class="grid-eq"><section class="card"><div class="card-h"><h2>Cara cek di spreadsheet</h2></div><ol class="sm" style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px"><li>Klik <b>Ekspor CSV cek silang</b>. Berisi 300 SKU: permintaan 12 bulan, harga, lead time, dan hasil aplikasi.</li><li>Buka di <b>Google Sheets</b> (File → Import). Rumus memakai nama fungsi bahasa Inggris: SUM, STDEV, SQRT, ROUNDUP.</li><li>Kolom <i>EOQ/SS/ROP (sheet)</i> dihitung spreadsheet. Tiga kolom <i>Selisih</i> di kanan harus bernilai 0 di semua baris.</li><li>Ubah service level di tab ABC-XYZ lalu ekspor ulang untuk menguji skenario lain.</li></ol><p class="help" style="margin-top:8px">Kode rumus juga punya uji otomatis di file <span class="mono">logic.test.js</span> (jalankan <span class="mono">node --test</span>).</p></section>
+   <section class="card"><div class="card-h"><h2>Asumsi model</h2></div><ul class="sm" style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px"><li>σ harian = σ bulanan ÷ √30 (permintaan harian dianggap independen).</li><li>Lead time pemasok tetap; variabilitas lead time belum dimodelkan.</li><li>ABC: A sampai 80% nilai kumulatif, B sampai 95%, sisanya C. XYZ: CV (simpangan baku sampel, n−1) &lt; 0,5 → X, ≤ 1,0 → Y, &gt; 1,0 → Z.</li><li>H = ${Math.round(set.hr*100)}% harga per tahun, S = Rp ${fmt(set.S)} per PO (ubah di Pengaturan). EOQ dan ROP dibulatkan ke atas, EOQ minimal 1.</li><li>Halaman ini memeriksa konsistensi kode, bukan audit independen; pembanding terbaik tetap spreadsheet.</li></ul></section></div>`};
+Object.assign(ACT,{csvVerify:()=>{dataCSV('cek-silang-rumus-wms-ti.csv',verifyCsvRows());toast('CSV cek silang diunduh (300 SKU). Buka di Google Sheets.')}});
+
+/* ================= Pop-up versi demo ================= */
+function demoHtml(){return`<h2 style="font-size:20px;margin-bottom:8px">Ini versi demo</h2>
+<p class="sm" style="margin-bottom:12px">WMS-TI dibuat untuk memperlihatkan cara metode teknik industri dipakai mengelola gudang. Ini bukan sistem yang siap dipakai di gudang sungguhan.</p>
+<ul class="demo-list"><li>Semua data adalah data rekaan (300 SKU, 60 pesanan) dan hanya tersimpan di browser ini.</li>
+<li>Belum ada login, peran pengguna, basis data bersama, pemindai barcode, atau integrasi ERP.</li>
+<li>Rumus (EOQ, safety stock, ABC-XYZ, slotting, rute) dihitung sungguhan dan sudah diverifikasi. Angka waktu dan biaya adalah asumsi.</li></ul>
+<p class="sm muted" style="margin:12px 0 16px">Versi lengkap dengan data nyata, banyak pengguna, dan integrasi dapat dikembangkan bila ada kesempatan bekerja sama.</p>
+<div class="actions" style="justify-content:flex-end"><button class="btn primary" id="demoOk" data-act="demoOk">Saya mengerti, lanjut</button></div>`}
+function ackDemo(){try{sessionStorage.setItem('wms-ti-ack','1')}catch(e){}UI.modal=null;renderOverlay()}
+ACT.demoOk=ackDemo;
+
+/* ================= Before/after slotting ================= */
+const sgn=v=>(v>0.049?'+':v<-0.049?'−':'')+f1(Math.abs(v))+'%';
+const dPct=(a,b)=>b?(a-b)/b*100:0;
+function baMap(map,tr,label){const S=7,px=x=>16+(x+6)*S,py=y=>14+y*S,Wm=G.ZW*3+G.GAP*2,Hm=G.ZH*2+G.GAP;
+  let g=ZONES.map((z,i)=>{const zc=i%3,zr=Math.floor(i/3);return`<rect x="${px(zc*(G.ZW+G.GAP))}" y="${py(zr*(G.ZH+G.GAP))}" width="${G.ZW*S}" height="${G.ZH*S}" fill="var(--surface)" stroke="var(--border-strong)" rx="4"/><text x="${px(zc*(G.ZW+G.GAP))+G.ZW*S-6}" y="${py(zr*(G.ZH+G.GAP))+14}" font-size="11" font-weight="700" text-anchor="end" opacity=".7">Zona ${z}</text>`}).join('');
+  ['C','B','A'].forEach(k=>DB.skus.forEach(s=>{if(s.dv.abc!==k)return;const l=map.get(s.id),r=k==='A'?3.6:k==='B'?2.8:2.1;g+=`<circle cx="${px(l.x)}" cy="${py(l.y)}" r="${r}" fill="${CLSC[k][0]}" stroke="var(--surface)" stroke-width=".7" opacity="${k==='C'?.6:1}"/>`}));
+  g+=`<rect x="${px(-7)}" y="${py(15)}" width="${4*S}" height="${6*S}" fill="var(--accent)" rx="3"/><text x="${px(-5)}" y="${py(18)+4}" font-size="10" font-weight="700" text-anchor="middle" style="fill:#0F172A">DOCK</text>`;
+  if(tr){const ord=tripOrder(tr.pts,G.DOCK),pts=[G.DOCK,...ord,G.DOCK];
+    for(let k=0;k<pts.length-1;k++){const a=pts[k],b=pts[k+1];g+=`<path d="M${px(a.x)} ${py(a.y)}H${px(b.x)}V${py(b.y)}" fill="none" stroke="var(--text)" stroke-width="2" stroke-dasharray="5 3" stroke-linejoin="round"/>`}
+    ord.forEach((l,k)=>{g+=`<circle cx="${px(l.x)}" cy="${py(l.y)}" r="8" fill="var(--accent)" stroke="var(--text)" stroke-width="1.5"/><text x="${px(l.x)}" y="${py(l.y)+4}" font-size="10" font-weight="700" text-anchor="middle" style="fill:#0F172A">${k+1}</text>`})}
+  return`<svg class="map-svg" viewBox="0 0 ${16+(Wm+8)*S} ${22+Hm*S}" role="img" aria-label="${esc(label)}">${g}</svg>`}
+function baHtml(prop,same){const b=beforeAfter(prop),ex=b.ex,dm=b.mC-b.mA;
+  const row=(n,a,c,d)=>`<tr><td>${n}</td><td class="num mono">${a}</td><td class="num mono">${c}</td><td class="num mono">${d}</td></tr>`;
+  const zr=(n,z)=>`<tr><td>${n}</td>${ZONES.map(k=>`<td class="num mono">${f1(z[k])}%</td>`).join('')}</tr>`;
+  const lab=(w,tr)=>tr?`${w}: contoh pesanan ${tr.id}, ${tr.pts.length} lokasi, rute ${f1(tr.dist)} meter`:`${w}: sebaran SKU di gudang`;
+  return`<section class="card" style="margin-bottom:16px"><div class="card-h"><h2>Sebelum dan sesudah slotting</h2><span class="xs muted">Titik biru = kelas A, kuning = B, abu = C</span></div>
+  ${same?'<p class="sm muted" style="margin-bottom:8px">Layout sekarang sudah sama dengan usulan, jadi tidak ada selisih. Kembalikan layout awal untuk melihat perbandingannya.</p>':''}
+  <div class="ba-grid"><div><h3 style="margin-bottom:4px">Sekarang</h3>${baMap(currentLayout(),ex&&ex.c,lab('Sekarang',ex&&ex.c))}</div><div><h3 style="margin-bottom:4px">Usulan</h3>${baMap(prop,ex&&ex.a,lab('Usulan',ex&&ex.a))}</div></div>
+  ${ex?`<p class="sm ba-note"><b>Contoh nyata:</b> pesanan <span class="mono">${esc(ex.c.id)}</span> (${ex.c.pts.length} lokasi) menempuh <b class="mono">${f1(ex.c.dist)} m</b> sekarang dan <b class="mono">${f1(ex.a.dist)} m</b> setelah relokasi, ${f1((ex.c.dist-ex.a.dist)/ex.c.dist*100)}% lebih pendek. Angka di peta menunjukkan urutan kunjungan.</p>`:''}
+  <h3 style="margin:16px 0 8px">Ringkasan per pesanan (rata-rata ${b.n} pesanan)</h3>
+  <table class="tbl ba-tbl"><thead><tr><th>Ukuran</th><th class="num">Sekarang</th><th class="num">Usulan</th><th class="num">Selisih</th></tr></thead><tbody>
+  ${row('Jarak tempuh (m)',f1(b.dC),f1(b.dA),sgn(dPct(b.dA,b.dC)))}${row('Waktu picking (menit)',f2(b.mC),f2(b.mA),sgn(dPct(b.mA,b.mC)))}${row('Kapasitas (pesanan/jam/picker)',f1(b.pC),f1(b.pA),sgn(dPct(b.pA,b.pC)))}${row('Waktu hemat per 100 pesanan (menit)','',f1(dm*100),'')}</tbody></table>
+  <p class="help" style="margin-top:8px">Waktu = jarak ÷ 72 m/menit + ${f2(PK.line)} menit × baris + ${PK.setup} menit persiapan. Angka ini asumsi model, bukan hasil studi waktu.</p>
+  <h3 style="margin:16px 0 8px">Beban picking per zona (% baris per tahun)</h3>
+  <table class="tbl ba-tbl"><thead><tr><th></th>${ZONES.map(k=>`<th class="num">Zona ${k}</th>`).join('')}</tr></thead><tbody>${zr('Sekarang',b.zC)}${zr('Usulan',b.zA)}</tbody></table>
+  <p class="help" style="margin-top:8px">Dock berada di kiri bawah. Zona D paling dekat dock. Setelah slotting, porsi picking bergeser ke zona yang dekat dock.</p></section>`}
+
+/* ================= VIEW: Sensitivitas ================= */
+UI.sens={pct:.2,sku:null};
+function tornadoSvg(rows,base){const W=560,LW=176,PW=W-LW-8,mid=LW+PW/2,rh=34,H=rows.length*rh+30;
+  const dl=r=>dPct(r.lo.cost,base.cost),dh=r=>dPct(r.hi.cost,base.cost),mx=Math.max(1,...rows.map(r=>Math.max(Math.abs(dl(r)),Math.abs(dh(r))))),sc=(PW/2-52)/mx;
+  let g=`<text x="${mid-8}" y="12" font-size="11" text-anchor="end" opacity=".75">parameter turun</text><text x="${mid+8}" y="12" font-size="11" opacity=".75">parameter naik</text><line x1="${mid}" y1="20" x2="${mid}" y2="${H-4}" stroke="var(--border-strong)"/>`;
+  rows.forEach((r,i)=>{const y=26+i*rh;g+=`<text x="0" y="${y+rh/2+1}" font-size="13">${esc(r.l)}</text>`;
+    [[dl(r),r.lol],[dh(r),r.hil]].forEach(([v,pl])=>{const w=Math.abs(v)*sc,x=v<0?mid-w:mid,pos=v>0;
+      g+=`<rect x="${x}" y="${y+7}" width="${w}" height="${rh-14}" rx="3" fill="${pos?'var(--warning)':'var(--success)'}"/>`+(pl!=='—'?`<text x="${pos?mid+w+6:mid-w-6}" y="${y+rh/2+4}" font-size="12" font-weight="600" text-anchor="${pos?'start':'end'}">${sgn(v)}</text>`:'')})});
+  return`<svg class="chart tornado" viewBox="0 0 ${W} ${H}" role="img" aria-label="Diagram tornado: dampak perubahan parameter terhadap total biaya persediaan">${g}</svg>`}
+function curveSvg(s){const v=s.dv,S0=DB.settings.S,q0=eoqF(v.D,S0,v.H);if(q0<=0)return'';
+  const W=560,Hh=236,L=70,R=16,T=14,B=44,pw=W-L-R,ph=Hh-T-B,qa=q0*.4,qb=q0*2.5,tc=q=>tcF(v.D,S0,v.H,q),cmin=tc(q0),y0=cmin*.85,y1=tc(qa)*1.03,X=q=>L+(q-qa)/(qb-qa)*pw,Y=c=>T+(1-(c-y0)/(y1-y0))*ph;
+  let g='';for(let k=0;k<=4;k++){const c=y0+(y1-y0)*k/4,y=Y(c);g+=`<line class="grid" x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="var(--border)"/><text x="${L-8}" y="${y+4}" font-size="11" text-anchor="end">${rpShort(c)}</text>`}
+  g+=`<rect x="${X(q0*.8)}" y="${T}" width="${X(q0*1.2)-X(q0*.8)}" height="${ph}" fill="var(--primary-soft)" opacity=".8"/>`;
+  [.5,1,1.5,2,2.5].forEach(m=>{g+=`<text x="${X(q0*m)}" y="${Hh-24}" font-size="11" text-anchor="middle">${fmt(q0*m)}</text>`});
+  g+=`<text x="${L+pw/2}" y="${Hh-6}" font-size="12" text-anchor="middle">Jumlah per pesanan (Q)</text>`;
+  let d='';for(let k=0;k<=80;k++){const q=qa+(qb-qa)*k/80;d+=(k?'L':'M')+X(q).toFixed(1)+' '+Y(tc(q)).toFixed(1)}
+  g+=`<path d="${d}" fill="none" stroke="var(--primary)" stroke-width="2.5"/><circle cx="${X(q0)}" cy="${Y(cmin)}" r="5" fill="var(--primary)" stroke="var(--surface)" stroke-width="2"/><text x="${X(q0)}" y="${Y(cmin)-12}" font-size="12" font-weight="700" text-anchor="middle">EOQ ${fmt(q0)}</text>`;
+  return`<svg class="chart" viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Kurva biaya tahunan terhadap Q untuk ${esc(s.code)}; minimum pada EOQ ${fmt(q0)}, rentang ±20% hampir datar">${g}</svg>`}
+VIEWS.sensitivitas=()=>{const f=UI.sens,pct=f.pct,tor=sensTornado(pct),base=tor.base,rows=tor.rows,top=rows[0];
+  const byVal=DB.skus.filter(s=>s.dv.eoq>=5).sort((a,b)=>b.dv.val-a.dv.val),sel=IDX.sku.get(f.sku)||byVal[0],v=sel.dv,q0=eoqF(v.D,DB.settings.S,v.H),cmin=tcF(v.D,DB.settings.S,v.H,q0);
+  const pen=m=>(0.5*(1/m+m)-1)*100,ssTop=rows.slice().sort((a,b)=>Math.abs(b.hi.ssVal-b.lo.ssVal)-Math.abs(a.hi.ssVal-a.lo.ssVal))[0];
+  const cell=(r,k)=>`${sgn(dPct(r.lo[k],base[k]))} / ${sgn(dPct(r.hi[k],base[k]))}`;
+  const tb=rows.map(r=>`<tr><td>${esc(r.l)}<div class="xs muted">${r.lol} / ${r.hil}</div></td><td class="num mono">${cell(r,'cost')}</td><td class="num mono">${cell(r,'ssVal')}</td><td class="num mono">${cell(r,'cycVal')}</td></tr>`).join('');
+  const pn=[.5,.8,1.2,1.5,2].map(m=>`<tr><td>Q = ${Math.round(m*100)}% dari EOQ (${fmt(q0*m)})</td><td class="num mono">+${f1(pen(m))}%</td></tr>`).join('');
+  return head('Analitik Teknik Industri','Seberapa peka keputusan persediaan terhadap kesalahan asumsi',verifyChip())+anTabs('sensitivitas')+
+  `<section class="card" style="margin-bottom:16px"><div class="toolbar" style="margin-bottom:0"><fieldset style="border:0;padding:0;margin:0"><legend class="lbl-s" style="padding:0;margin-bottom:4px">Besar perubahan parameter</legend><div class="seg" role="radiogroup">${[10,20,30].map(p=>`<label><input type="radio" name="spct" value="${p}" data-bind="sensPct" ${Math.round(pct*100)===p?'checked':''}><span>±${p}%</span></label>`).join('')}</div></fieldset>
+   <p class="sm muted" style="margin:0;flex:1;min-width:220px">Parameter diubah satu per satu pada seluruh ${fmt(DB.skus.length)} SKU. Titik acuan: service level ${String(DB.settings.sl).replace('.',',')}%, S = ${rp(DB.settings.S)}, H = ${Math.round(DB.settings.hr*100)}% harga per tahun.</p></div></section>
+  <div class="grid-4"><div class="card kpi"><span class="kpi-l">Biaya persediaan relevan</span><span class="kpi-v mono">${rpShort(base.cost)}</span><span class="xs muted">pesan + simpan stok siklus + simpan SS, per tahun</span></div>
+   <div class="card kpi"><span class="kpi-l">Nilai safety stock</span><span class="kpi-v mono">${rpShort(base.ssVal)}</span><span class="xs muted">tanpa pembulatan, sebagai acuan</span></div>
+   <div class="card kpi"><span class="kpi-l">Nilai stok siklus</span><span class="kpi-v mono">${rpShort(base.cycVal)}</span><span class="xs muted">Σ (EOQ ÷ 2) × harga</span></div>
+   <div class="card kpi"><span class="kpi-l">Paling peka</span><span class="kpi-v" style="font-size:18px">${esc(top.l)}</span><span class="xs muted">biaya ${sgn(dPct(top.lo.cost,base.cost))} sampai ${sgn(dPct(top.hi.cost,base.cost))}</span></div></div>
+  <div class="grid-2"><section class="card"><div class="card-h"><h2>Dampak ke total biaya</h2><span class="xs muted">diurutkan dari paling peka</span></div>${tornadoSvg(rows,base)}
+    <p class="help" style="margin-top:8px">Hijau berarti biaya turun, oranye berarti naik. Semua parameter bergerak searah dengan biaya, jadi bar kiri berasal dari parameter yang diturunkan.</p></section>
+   <section class="card" style="padding:0"><div class="card-h" style="padding:16px 16px 0"><h2>Rincian dampak</h2></div><table class="tbl ba-tbl"><thead><tr><th>Parameter</th><th class="num">Biaya total</th><th class="num">Nilai SS</th><th class="num">Stok siklus</th></tr></thead><tbody>${tb}</tbody></table><p class="help" style="padding:8px 16px 16px">Setiap sel: perubahan jika parameter turun / naik.</p></section></div>
+  <section class="card" style="margin-bottom:16px"><div class="card-h"><h2>Temuan dari data ini</h2></div><ul class="demo-list">
+   <li><b>${esc(top.l)}</b> paling mempengaruhi total biaya. Perubahan ${Math.round(pct*100)}% menggeser biaya ${sgn(dPct(top.lo.cost,base.cost))} sampai ${sgn(dPct(top.hi.cost,base.cost))}.</li>
+   <li>Nilai safety stock paling peka terhadap <b>${esc(ssTop.l)}</b> (${sgn(dPct(ssTop.lo.ssVal,base.ssVal))} sampai ${sgn(dPct(ssTop.hi.ssVal,base.ssVal))}). Menaikkan service level satu tingkat berarti menambah modal yang terikat di stok pengaman.</li>
+   <li>Biaya pesan dan biaya simpan berpengaruh kecil pada total biaya karena EOQ meredamnya: EOQ hanya berubah sebesar akar dari perubahan S ÷ H.</li></ul></section>
+  <section class="card"><div class="card-h"><h2>Mengapa EOQ tahan salah tebak</h2><div class="field" style="min-width:220px"><label for="sensSku" class="sr">Pilih SKU</label><select id="sensSku" class="select" data-bind="sensSku">${byVal.slice(0,30).map(s=>`<option value="${s.id}" ${s.id===sel.id?'selected':''}>${esc(s.code)} · kelas ${s.dv.abc}${s.dv.xyz}</option>`).join('')}</select></div></div>
+   ${q0>0?`<div class="grid-2"><div>${curveSvg(sel)}<p class="help">Area biru = Q dalam ±20% dari EOQ. Kurva hampir datar di sana.</p></div>
+   <div><div class="formula">TC(Q) = D÷Q · S + Q÷2 · H<br>D = ${fmt(v.D)} /thn · S = ${fmt(DB.settings.S)} · H = ${fmt(v.H)}<br>EOQ = ${fmt(q0)} · TC minimum = √(2·D·S·H) = <b>${rpShort(cmin)}</b>/thn</div>
+   <table class="tbl" style="margin-top:12px"><thead><tr><th>Jika memesan</th><th class="num">Tambahan biaya</th></tr></thead><tbody>${pn}</tbody></table><p class="help" style="margin-top:8px">Tambahan = ½(Q*÷Q + Q÷Q*) − 1. Memesan 20% terlalu banyak atau sedikit hanya menambah sekitar 1,7% biaya, jadi akurasi S dan H tidak perlu sempurna.</p></div></div>`:empty('Tidak ada permintaan','SKU ini tidak punya permintaan, EOQ tidak terdefinisi.')}</section>`};
+
+init();
+</script>
+</body>
+</html>
